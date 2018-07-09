@@ -1,1 +1,1 @@
-"C:\Visual Studio 2017\Professional\VC\Auxiliary\Build\vcvarsall.bat" x64 && nmake && ldk_editor.exe
+"C:\Visual Studio 2017\Professional\VC\Auxiliary\Build\vcvarsall.bat" x64 && nmake clean && nmake game && ldk_editor.exe
