@@ -1,4 +1,5 @@
 // game.cpp : Defines the exported functions for the DLL application.
+//#define DEBUG_WAYPOINT_DOTS
 
 #include <../include/ldk/ldk.h>
 #include "model.hpp"
@@ -6,13 +7,13 @@
 #include <iostream>
 
 void setupSprite();
-void InitializeWaypoints();
+void InitializeallDots();
 void ReadInput(const float,Entity&);
 int InvertHorizontalDirection(const int);
 
 void gameInit(void* memory)
 {
-	LDK_ASSERT(WAYPOINTS_LENGTH % 2 == 0, "WAYPOINTS_LENGTH não é par!");
+	LDK_ASSERT(DOTS_LENGTH % 2 == 0, "DOTS_LENGTH não é par!");
 	gameState = (GameState*)memory;
 
 	// Background
@@ -37,17 +38,17 @@ void gameInit(void* memory)
 	gameState->pacman.direction = { 0,0,0 };
 	gameState->desiredAngle = RADIAN(0);
 
-	// Waypoint
-	gameState->waypointSprite.color = { 1.0, 1.0, 1.0, 1.0 };
-	gameState->waypointSprite.width = 2;
-	gameState->waypointSprite.height = 2;
-	gameState->waypointSprite.srcRect = { 500,20,1,1 };
-	gameState->waypointSprite.angle = 0;
-	gameState->waypointSprite.position = { 0, 0, WAYPOINT_LAYER };
+	// Dot
+	gameState->dotSprite.color = { 1.0, 1.0, 1.0, 1.0 };
+	gameState->dotSprite.width = 2;
+	gameState->dotSprite.height = 2;
+	gameState->dotSprite.srcRect = { 500,20,1,1 };
+	gameState->dotSprite.angle = 0;
+	gameState->dotSprite.position = { 0, 0, Dot_LAYER };
 
-	InitializeWaypoints();
+	InitializeallDots();
 
-	gameState->pacman.sprite.position.y = gameState->waypoints[20].position.y;
+	gameState->pacman.sprite.position.y = gameState->allDots[20].position.y;
 
 	ldk::render::spriteBatchInit();
 }
@@ -68,7 +69,7 @@ void gameUpdate(float deltaTime)
 
 	Entity& pacman = gameState->pacman;
 	ReadInput(deltaTime, pacman);
-	MoveAndCheckWaypoints(deltaTime, pacman);
+	MoveAndCheckallDots(deltaTime, pacman);
 
 	// Check bounds and teleport pacman, if needed
 	if (gameState->pacman.sprite.position.x < -5)
@@ -80,107 +81,126 @@ void gameUpdate(float deltaTime)
 		gameState->pacman.sprite.position.x = -5;
 	}
 
-#if DEBUG_WAYPOINTS
-	// waypoints
-	ldk::Sprite& waypointSprite = gameState->WaypointSprite;
-	Waypoint* waypoints = gameState->Waypoints;
-	for (int x = 0; x < WAYPOINTS_LENGTH; x++)
+	ldk::Sprite& dotSprite = gameState->dotSprite;
+	Dot* allDots = gameState->allDots;
+
+	for (int x = 0; x < DOTS_LENGTH; x++)
 	{
-		waypointSprite.position.x = waypoints[x].position.x;
-		waypointSprite.position.y = waypoints[x].position.y;
-		ldk::render::spriteBatchSubmit(gameState->WaypointSprite);
+		if (allDots[x].isEnabled)
+		{
+			dotSprite.position.x = allDots[x].position.x;
+			dotSprite.position.y = allDots[x].position.y;
+			ldk::render::spriteBatchSubmit(gameState->dotSprite);
+		}
+	}
+
+#ifdef DEBUG_WAYPOINT_DOTS //_LDK_DEBUG_
+	// allDots
+	for (int x = 0; x < DOTS_LENGTH; x++)
+	{
+		dotSprite.position.x = allDots[x].position.x;
+		dotSprite.position.y = allDots[x].position.y;
+		ldk::render::spriteBatchSubmit(gameState->dotSprite);
 	}
 #endif
+
 	ldk::render::spriteBatchSubmit(gameState->pacman.sprite);
 	ldk::render::spriteBatchEnd();
 }
 
-void InitializeWaypoints()
+void InitializeallDots()
 {
-	Waypoint* waypointsPtr = gameState->waypoints;
+	Dot* allDotsPtr = gameState->allDots;
 
+	// WAYPOINTS
 	// X 13
-	waypointsPtr[0] = Waypoint({ 13, SCREEN_HEIGHT - 12, 0 });
-	waypointsPtr[0].allowedDirections = (BINARY_DOWN | BINARY_RIGHT);
-	waypointsPtr[1] = Waypoint({ 13, SCREEN_HEIGHT - 43, 0 });
-	waypointsPtr[1].allowedDirections = (BINARY_DOWN | BINARY_RIGHT | BINARY_UP);
-	waypointsPtr[2] = Waypoint({ 13, SCREEN_HEIGHT - 67, 0 });
-	waypointsPtr[2].allowedDirections = (BINARY_RIGHT | BINARY_UP);
-	waypointsPtr[3] = Waypoint({ 13, SCREEN_HEIGHT - 163, 0 });
-	waypointsPtr[3].allowedDirections = (BINARY_RIGHT | BINARY_DOWN);
-	waypointsPtr[4] = Waypoint({ 13, SCREEN_HEIGHT - 187, 0 });
-	waypointsPtr[4].allowedDirections = (BINARY_RIGHT | BINARY_UP);
-	waypointsPtr[5] = Waypoint({ 13, SCREEN_HEIGHT - 211, 0 });
-	waypointsPtr[5].allowedDirections = (BINARY_RIGHT | BINARY_DOWN);
-	waypointsPtr[6] = Waypoint({ 13, SCREEN_HEIGHT - 235, 0 });
-	waypointsPtr[6].allowedDirections = (BINARY_RIGHT | BINARY_UP);
+	allDotsPtr[0] = Dot({ 13, SCREEN_HEIGHT - 12, 0 }, WaypointDot);
+	allDotsPtr[0].allowedDirections = (BINARY_DOWN | BINARY_RIGHT);
+	allDotsPtr[1] = Dot({ 13, SCREEN_HEIGHT - 43, 0 }, WaypointDot);
+	allDotsPtr[1].allowedDirections = (BINARY_DOWN | BINARY_RIGHT | BINARY_UP);
+	allDotsPtr[2] = Dot({ 13, SCREEN_HEIGHT - 67, 0 }, WaypointDot);
+	allDotsPtr[2].allowedDirections = (BINARY_RIGHT | BINARY_UP);
+	allDotsPtr[3] = Dot({ 13, SCREEN_HEIGHT - 163, 0 }, WaypointDot);
+	allDotsPtr[3].allowedDirections = (BINARY_RIGHT | BINARY_DOWN);
+	allDotsPtr[4] = Dot({ 13, SCREEN_HEIGHT - 187, 0 }, WaypointDot);
+	allDotsPtr[4].allowedDirections = (BINARY_RIGHT | BINARY_UP);
+	allDotsPtr[5] = Dot({ 13, SCREEN_HEIGHT - 211, 0 }, WaypointDot);
+	allDotsPtr[5].allowedDirections = (BINARY_RIGHT | BINARY_DOWN);
+	allDotsPtr[6] = Dot({ 13, SCREEN_HEIGHT - 235, 0 }, WaypointDot);
+	allDotsPtr[6].allowedDirections = (BINARY_RIGHT | BINARY_UP);
 
 	// X 29
-	waypointsPtr[7] = Waypoint({ 29, SCREEN_HEIGHT - 187, 0 });
-	waypointsPtr[7].allowedDirections = (BINARY_LEFT | BINARY_DOWN);
-	waypointsPtr[8] = Waypoint({ 29, SCREEN_HEIGHT - 211, 0 });
-	waypointsPtr[8].allowedDirections = (BINARY_RIGHT | BINARY_UP | BINARY_LEFT);
+	allDotsPtr[7] = Dot({ 29, SCREEN_HEIGHT - 187, 0 }, WaypointDot);
+	allDotsPtr[7].allowedDirections = (BINARY_LEFT | BINARY_DOWN);
+	allDotsPtr[8] = Dot({ 29, SCREEN_HEIGHT - 211, 0 }, WaypointDot);
+	allDotsPtr[8].allowedDirections = (BINARY_RIGHT | BINARY_UP | BINARY_LEFT);
 
 	// X 53
-	waypointsPtr[9] = Waypoint({ 53, SCREEN_HEIGHT - 12, 0 });
-	waypointsPtr[9].allowedDirections = (BINARY_RIGHT | BINARY_LEFT | BINARY_DOWN);
-	waypointsPtr[10] = Waypoint({ 53, SCREEN_HEIGHT - 43, 0 });
-	waypointsPtr[10].allowedDirections = (BINARY_RIGHT | BINARY_LEFT | BINARY_DOWN | BINARY_UP);
-	waypointsPtr[11] = Waypoint({ 53, SCREEN_HEIGHT - 67, 0 });
-	waypointsPtr[11].allowedDirections = (BINARY_LEFT | BINARY_UP | BINARY_DOWN);
-	waypointsPtr[12] = Waypoint({ 53, SCREEN_HEIGHT - 115, 0 });
-	waypointsPtr[12].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP | BINARY_DOWN);
-	waypointsPtr[13] = Waypoint({ 53, SCREEN_HEIGHT - 163, 0 });
-	waypointsPtr[13].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP | BINARY_DOWN);
-	waypointsPtr[14] = Waypoint({ 53, SCREEN_HEIGHT - 187, 0 });
-	waypointsPtr[14].allowedDirections = (BINARY_RIGHT | BINARY_UP | BINARY_DOWN);
-	waypointsPtr[15] = Waypoint({ 53, SCREEN_HEIGHT - 211, 0 });
-	waypointsPtr[15].allowedDirections = (BINARY_LEFT | BINARY_UP);
+	allDotsPtr[9] = Dot({ 53, SCREEN_HEIGHT - 12, 0 }, WaypointDot);
+	allDotsPtr[9].allowedDirections = (BINARY_RIGHT | BINARY_LEFT | BINARY_DOWN);
+	allDotsPtr[10] = Dot({ 53, SCREEN_HEIGHT - 43, 0 }, WaypointDot);
+	allDotsPtr[10].allowedDirections = (BINARY_RIGHT | BINARY_LEFT | BINARY_DOWN | BINARY_UP);
+	allDotsPtr[11] = Dot({ 53, SCREEN_HEIGHT - 67, 0 }, WaypointDot);
+	allDotsPtr[11].allowedDirections = (BINARY_LEFT | BINARY_UP | BINARY_DOWN);
+	allDotsPtr[12] = Dot({ 53, SCREEN_HEIGHT - 115, 0 }, WaypointDot);
+	allDotsPtr[12].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP | BINARY_DOWN);
+	allDotsPtr[13] = Dot({ 53, SCREEN_HEIGHT - 163, 0 }, WaypointDot);
+	allDotsPtr[13].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP | BINARY_DOWN);
+	allDotsPtr[14] = Dot({ 53, SCREEN_HEIGHT - 187, 0 }, WaypointDot);
+	allDotsPtr[14].allowedDirections = (BINARY_RIGHT | BINARY_UP | BINARY_DOWN);
+	allDotsPtr[15] = Dot({ 53, SCREEN_HEIGHT - 211, 0 }, WaypointDot);
+	allDotsPtr[15].allowedDirections = (BINARY_LEFT | BINARY_UP);
 
 	// X 77
-	waypointsPtr[16] = Waypoint({ 77, SCREEN_HEIGHT - 43, 0 });
-	waypointsPtr[16].allowedDirections = (BINARY_DOWN | BINARY_RIGHT | BINARY_LEFT);
-	waypointsPtr[17] = Waypoint({ 77, SCREEN_HEIGHT - 67, 0 });
-	waypointsPtr[17].allowedDirections = (BINARY_UP | BINARY_RIGHT);
-	waypointsPtr[18] = Waypoint({ 77, SCREEN_HEIGHT - 91, 0 });
-	waypointsPtr[18].allowedDirections = (BINARY_DOWN | BINARY_RIGHT);
-	waypointsPtr[19] = Waypoint({ 77, SCREEN_HEIGHT - 115, 0 });
-	waypointsPtr[19].allowedDirections = (BINARY_DOWN | BINARY_LEFT | BINARY_UP);
-	waypointsPtr[20] = Waypoint({ 77, SCREEN_HEIGHT - 137, 0 });
-	waypointsPtr[20].allowedDirections = (BINARY_RIGHT | BINARY_DOWN | BINARY_UP);
-	waypointsPtr[21] = Waypoint({ 77, SCREEN_HEIGHT - 163, 0 });
-	waypointsPtr[21].allowedDirections = (BINARY_RIGHT | BINARY_LEFT | BINARY_UP);
-	waypointsPtr[22] = Waypoint({ 77, SCREEN_HEIGHT - 187, 0 });
-	waypointsPtr[22].allowedDirections = (BINARY_RIGHT | BINARY_LEFT | BINARY_DOWN);
-	waypointsPtr[23] = Waypoint({ 77, SCREEN_HEIGHT - 211, 0 });
-	waypointsPtr[23].allowedDirections = (BINARY_RIGHT | BINARY_UP);
+	allDotsPtr[16] = Dot({ 77, SCREEN_HEIGHT - 43, 0 }, WaypointDot);
+	allDotsPtr[16].allowedDirections = (BINARY_DOWN | BINARY_RIGHT | BINARY_LEFT);
+	allDotsPtr[17] = Dot({ 77, SCREEN_HEIGHT - 67, 0 }, WaypointDot);
+	allDotsPtr[17].allowedDirections = (BINARY_UP | BINARY_RIGHT);
+	allDotsPtr[18] = Dot({ 77, SCREEN_HEIGHT - 91, 0 }, WaypointDot);
+	allDotsPtr[18].allowedDirections = (BINARY_DOWN | BINARY_RIGHT);
+	allDotsPtr[19] = Dot({ 77, SCREEN_HEIGHT - 115, 0 }, WaypointDot);
+	allDotsPtr[19].allowedDirections = (BINARY_DOWN | BINARY_LEFT | BINARY_UP);
+	allDotsPtr[20] = Dot({ 77, SCREEN_HEIGHT - 137, 0 }, WaypointDot);
+	allDotsPtr[20].allowedDirections = (BINARY_RIGHT | BINARY_DOWN | BINARY_UP);
+	allDotsPtr[21] = Dot({ 77, SCREEN_HEIGHT - 163, 0 }, WaypointDot);
+	allDotsPtr[21].allowedDirections = (BINARY_RIGHT | BINARY_LEFT | BINARY_UP);
+	allDotsPtr[22] = Dot({ 77, SCREEN_HEIGHT - 187, 0 }, WaypointDot);
+	allDotsPtr[22].allowedDirections = (BINARY_RIGHT | BINARY_LEFT | BINARY_DOWN);
+	allDotsPtr[23] = Dot({ 77, SCREEN_HEIGHT - 211, 0 }, WaypointDot);
+	allDotsPtr[23].allowedDirections = (BINARY_RIGHT | BINARY_UP);
 
 	// X 101
-	waypointsPtr[24] = Waypoint({ 101, SCREEN_HEIGHT - 12, 0 });
-	waypointsPtr[24].allowedDirections = (BINARY_LEFT | BINARY_DOWN);
-	waypointsPtr[25] = Waypoint({ 101, SCREEN_HEIGHT - 43, 0 });
-	waypointsPtr[25].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP);
-	waypointsPtr[26] = Waypoint({ 101, SCREEN_HEIGHT - 67, 0 });
-	waypointsPtr[26].allowedDirections = (BINARY_LEFT | BINARY_DOWN);
-	waypointsPtr[27] = Waypoint({ 101, SCREEN_HEIGHT - 91, 0 });
-	waypointsPtr[27].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP);
-	waypointsPtr[28] = Waypoint({ 101, SCREEN_HEIGHT - 163, 0 });
-	waypointsPtr[28].allowedDirections = (BINARY_LEFT | BINARY_DOWN);
-	waypointsPtr[29] = Waypoint({ 101, SCREEN_HEIGHT - 187, 0 });
-	waypointsPtr[29].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP);
-	waypointsPtr[30] = Waypoint({ 101, SCREEN_HEIGHT - 211, 0 });
-	waypointsPtr[30].allowedDirections = (BINARY_LEFT | BINARY_DOWN);
-	waypointsPtr[31] = Waypoint({ 101, SCREEN_HEIGHT - 235, 0 });
-	waypointsPtr[31].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP);
+	allDotsPtr[24] = Dot({ 101, SCREEN_HEIGHT - 12, 0 }, WaypointDot);
+	allDotsPtr[24].allowedDirections = (BINARY_LEFT | BINARY_DOWN);
+	allDotsPtr[25] = Dot({ 101, SCREEN_HEIGHT - 43, 0 }, WaypointDot);
+	allDotsPtr[25].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP);
+	allDotsPtr[26] = Dot({ 101, SCREEN_HEIGHT - 67, 0 }, WaypointDot);
+	allDotsPtr[26].allowedDirections = (BINARY_LEFT | BINARY_DOWN);
+	allDotsPtr[27] = Dot({ 101, SCREEN_HEIGHT - 91, 0 }, WaypointDot);
+	allDotsPtr[27].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP);
+	allDotsPtr[28] = Dot({ 101, SCREEN_HEIGHT - 163, 0 }, WaypointDot);
+	allDotsPtr[28].allowedDirections = (BINARY_LEFT | BINARY_DOWN);
+	allDotsPtr[29] = Dot({ 101, SCREEN_HEIGHT - 187, 0 }, WaypointDot);
+	allDotsPtr[29].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP);
+	allDotsPtr[30] = Dot({ 101, SCREEN_HEIGHT - 211, 0 }, WaypointDot);
+	allDotsPtr[30].allowedDirections = (BINARY_LEFT | BINARY_DOWN);
+	allDotsPtr[31] = Dot({ 101, SCREEN_HEIGHT - 235, 0 }, WaypointDot);
+	allDotsPtr[31].allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP);
 
-	// Copy information from the left side to the right side
-	int halfWaypointsLength = (int)WAYPOINTS_LENGTH / 2;
-	for (int x = 0; x < halfWaypointsLength; x++)
+	//SIMPLE DOTS
+	allDotsPtr[32] = Dot({ 21, SCREEN_HEIGHT - 12, 0 }, SimpleDot);
+	allDotsPtr[33] = Dot({ 29, SCREEN_HEIGHT - 12, 0 }, SimpleDot);
+	allDotsPtr[34] = Dot({ 38, SCREEN_HEIGHT - 12, 0 }, SimpleDot);
+	allDotsPtr[35] = Dot({ 46, SCREEN_HEIGHT - 12, 0 }, SimpleDot);
+
+	// Copy all information from the left side to the right side of the map
+	int halfallDotsLength = (int)DOTS_LENGTH / 2;
+	for (int x = 0; x < halfallDotsLength; x++)
 	{
-		ldk::Vec3 curPos = waypointsPtr[x].position;
-		int realIndex = halfWaypointsLength + x;
-		waypointsPtr[realIndex] = Waypoint({ SCREEN_WIDTH - curPos.x, curPos.y });
-		waypointsPtr[realIndex].allowedDirections = InvertHorizontalDirection(waypointsPtr[x].allowedDirections);
+		ldk::Vec3 curPos = allDotsPtr[x].position;
+		int realIndex = halfallDotsLength + x;
+		allDotsPtr[realIndex] = Dot({ SCREEN_WIDTH - curPos.x, curPos.y }, allDotsPtr[realIndex].dotType);
+		allDotsPtr[realIndex].allowedDirections = InvertHorizontalDirection(allDotsPtr[x].allowedDirections);
 	}
 }
 
@@ -235,14 +255,14 @@ void ReadInput(const float deltaTime, Entity& pacman)
 		// If he's walking
 		if (pacman.direction == ldk::Vec3::zero())
 		{
-			//If we`ve stopped on an Waypoint
-			if (gameState->currentWaypointIndex != INVALID_WAYPOINT_INDEX)
+			//If we`ve stopped on an Dot
+			if (gameState->currentDotIndex != INVALID_WAYPOINT_INDEX)
 			{
-				// Check if this waypoint allows us to move in the desired direction we want
-				Waypoint& waypoint = gameState->waypoints[gameState->currentWaypointIndex];
+				// Check if this Dot allows us to move in the desired direction we want
+				Dot& Dot = gameState->allDots[gameState->currentDotIndex];
 				int desiredDirAsInt = Vec3ToIntDir(gameState->desiredDir);
 				// Check if we can move in the desiredDir
-				if ((desiredDirAsInt & waypoint.allowedDirections) == desiredDirAsInt)
+				if ((desiredDirAsInt & Dot.allowedDirections) == desiredDirAsInt)
 				{
 					pacman.sprite.angle = gameState->desiredAngle;
 					pacman.direction = gameState->desiredDir;

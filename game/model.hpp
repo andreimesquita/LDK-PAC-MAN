@@ -2,15 +2,15 @@
 #define SCREEN_HEIGHT 248
 // Layers
 #define BACKGROUND_LAYER 0
-#define WAYPOINT_LAYER   1
-#define PACMAN_LAYER     2
+#define Dot_LAYER   1
+#define PACMAN_LAYER 2
 // Binary directions
 #define BINARY_LEFT  0x8
 #define BINARY_RIGHT 0x4
 #define BINARY_UP    0x2
 #define BINARY_DOWN  0x1
 
-#define WAYPOINTS_LENGTH 64
+#define DOTS_LENGTH 72
 
 #define INVALID_WAYPOINT_INDEX -1
 
@@ -27,14 +27,23 @@ struct Entity
 	float speed;
 };
 
-struct Waypoint
+enum EDotType
+{
+	WaypointDot, SimpleDot, SpecialDot
+};
+
+struct Dot
 {
 	ldk::Vec3 position;
 	int allowedDirections;
+	EDotType dotType;
+	bool isEnabled;
 
-	Waypoint(ldk::Vec3 pos)
+	Dot(ldk::Vec3 pPos, EDotType pType): 
+		isEnabled(true)
 	{
-		position = pos;
+		dotType = pType;
+		position = pPos;
 		allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP | BINARY_DOWN);
 	}
 };
@@ -43,9 +52,11 @@ struct GameState
 {
 	ldk::Material spritesheet;
 	ldk::Sprite background;
-	ldk::Sprite waypointSprite;
-	Waypoint waypoints[WAYPOINTS_LENGTH];
-	int currentWaypointIndex;
+	ldk::Sprite dotSprite;
+	Dot allDots[DOTS_LENGTH];
+	int currentDotIndex;
+
+	int playerPoints = 0;
 
 	ldk::Vec3 desiredDir;
 	float desiredAngle;
