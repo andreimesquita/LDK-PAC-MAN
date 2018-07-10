@@ -5,10 +5,10 @@
 #define WAYPOINT_LAYER   1
 #define PACMAN_LAYER     2
 // Binary directions
-#define BINARY_LEFT  0b1000
-#define BINARY_RIGHT 0b100
-#define BINARY_UP    0b0010
-#define BINARY_DOWN  0b0001
+#define BINARY_LEFT  0x8
+#define BINARY_RIGHT 0x4
+#define BINARY_UP    0x2
+#define BINARY_DOWN  0x1
 
 #define WAYPOINTS_LENGTH 64
 
@@ -30,11 +30,12 @@ struct Entity
 struct Waypoint
 {
 	ldk::Vec3 position;
-	int allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP | BINARY_DOWN);
+	int allowedDirections;
 
 	Waypoint(ldk::Vec3 pos)
 	{
 		position = pos;
+		allowedDirections = (BINARY_LEFT | BINARY_RIGHT | BINARY_UP | BINARY_DOWN);
 	}
 };
 
@@ -46,7 +47,7 @@ struct GameState
 	Waypoint waypoints[WAYPOINTS_LENGTH];
 	int currentWaypointIndex;
 
-	ldk::Vec3 desiredDir = {};
+	ldk::Vec3 desiredDir;
 	float desiredAngle;
 	Entity pacman;
 } *gameState = nullptr;
