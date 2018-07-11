@@ -1,123 +1,80 @@
 int Vec3ToIntDir(const ldk::Vec3);
-void HandleVerticalMovement(Entity&);
-void HandleHorizontalMovement(Entity&);
+void HandleHorizontalDots(Entity&);
+void HandleVerticalDots(Entity&);
+void HandleHorizontalWaypoints(Entity&);
+void HandleVerticalWaypoints(Entity&);
 
-void MoveAndCheckallDots(const float deltaTime, Entity& pacman)
+void MovePacman(const float deltaTime, Entity& pacman)
 {
 	pacman.sprite.position += pacman.direction * pacman.speed * deltaTime;
 
 	if (pacman.direction.x != 0)
 	{
 		// Pacman`s moving HORIZONTALLY
-		HandleHorizontalMovement(pacman);
+		HandleHorizontalDots(pacman);
+		HandleHorizontalWaypoints(pacman);
 
 		if (pacman.direction.x != 0)
 		{
-			gameState->currentDotIndex = INVALID_WAYPOINT_INDEX;
+			gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
 		}
 	}
 	else if (gameState->pacman.direction.y != 0)
 	{
 		// Pacman`s moving VERTICALLY
-		HandleVerticalMovement(pacman);
+		HandleVerticalDots(pacman);
+		HandleVerticalWaypoints(pacman);
 
 		if (pacman.direction.y != 0)
 		{
-			gameState->currentDotIndex = INVALID_WAYPOINT_INDEX;
+			gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
 		}
 	}
+
+	// Check bounds and teleport pacman, if needed
+	if (gameState->pacman.sprite.position.x < -5)
+	{
+		gameState->pacman.sprite.position.x = SCREEN_WIDTH + 4;
+	}
+	else if (gameState->pacman.sprite.position.x > SCREEN_WIDTH + 5)
+	{
+		gameState->pacman.sprite.position.x = -5;
+	}
+
 	pacman.previousPosition = pacman.sprite.position;
 }
 
-void HandleHorizontalMovement(Entity& pacman)
+void HandleHorizontalDots(Entity& pacman)
 {
-	int desiredDirAsInt = Vec3ToIntDir(gameState->desiredDir);
-	int currentDirAsInt = (pacman.direction.x > 0) ? BINARY_RIGHT : BINARY_LEFT;
-	Dot* ptrDots = gameState->allDots;
+	Dot* allDotsPtr = gameState->allDots;
 
 	for (int i = 0; i < DOTS_LENGTH; i++)
 	{
 		// Only execute the next checks if the Y position is the same as the Pacman
-		if (floor(pacman.sprite.position.y) == floor(ptrDots[i].position.y))
+		if (floor(pacman.sprite.position.y) == floor(allWaypointsPtr[i].position.y))
 		{
 			// Check if he has triggered with a Dot
 			if (pacman.direction.x > 0)
 			{
 				// Pacman's moving to the right
-				if (pacman.sprite.position.x >= ptrDots[i].position.x
-					&& pacman.previousPosition.x < ptrDots[i].position.x)
+				if (pacman.sprite.position.x >= allDotsPtr[i].position.x
+					&& pacman.previousPosition.x < allDotsPtr[i].position.x)
 				{
-					if (ptrDots[i].dotType == WaypointDot)
-					{
-						if (desiredDirAsInt != 0 && gameState->desiredDir.y != 0)
-						{
-							if ((desiredDirAsInt & ptrDots[i].allowedDirections) == desiredDirAsInt)
-							{
-								gameState->currentDotIndex = INVALID_WAYPOINT_INDEX;
-								pacman.direction = gameState->desiredDir;
-								pacman.sprite.angle = gameState->desiredAngle;
-								pacman.sprite.position.x = ptrDots[i].position.x;
-								continue;
-							}
-						}
-
-						// Check if we can move on the direction we desire
-						if ((currentDirAsInt & ptrDots[i].allowedDirections) == currentDirAsInt)
-						{
-							// Just keep moving in the same direction
-							continue;
-						}
-
-						// Pacman hit a wall
-						gameState->currentDotIndex = i;
-						pacman.direction.x = 0;
-						gameState->desiredDir.x = 0;
-						pacman.sprite.position.x = ptrDots[i].position.x;
-					}
-					else if (ptrDots[i].dotType == SimpleDot)
-					{
-						ptrDots[i].isEnabled = false;
-						gameState->playerPoints += 1;
-						LogInfo("POINT RECEIVED! total=%i", gameState->playerPoints);
-					}
+					allDotsPtr[i].isEnabled = false;
+					gameState->playerPoints += allDotsPtr[i].isSpecial ? 3 : 1;
+					LogInfo("POINT RECEIVED! total=%i", gameState->playerPoints);
 				}
 			}
 			else
 			{
 				// Pacman's moving to the left
-				if (pacman.sprite.position.x <= ptrDots[i].position.x
-					&& pacman.previousPosition.x > ptrDots[i].position.x)
+				if (pacman.sprite.position.x <= allDotsPtr[i].position.x
+					&& pacman.previousPosition.x > allDotsPtr[i].position.x)
 				{
-					if (ptrDots[i].dotType == WaypointDot)
+					if (allDotsPtr[i].isEnabled)
 					{
-						if (desiredDirAsInt != 0 && gameState->desiredDir.y != 0)
-						{
-							if ((desiredDirAsInt & ptrDots[i].allowedDirections) == desiredDirAsInt)
-							{
-								gameState->currentDotIndex = INVALID_WAYPOINT_INDEX;
-								pacman.direction = gameState->desiredDir;
-								pacman.sprite.angle = gameState->desiredAngle;
-								pacman.sprite.position.x = ptrDots[i].position.x;
-								continue;
-							}
-						}
-
-						if ((currentDirAsInt & ptrDots[i].allowedDirections) == currentDirAsInt)
-						{
-							// Just keep moving in the same direction
-							continue;
-						}
-
-						// Pacman hit a wall
-						gameState->currentDotIndex = i;
-						pacman.direction.x = 0;
-						gameState->desiredDir.x = 0;
-						pacman.sprite.position.x = ptrDots[i].position.x;
-					}
-					else if (ptrDots[i].dotType == SimpleDot)
-					{
-						ptrDots[i].isEnabled = false;
-						gameState->playerPoints += 1;
+						allDotsPtr[i].isEnabled = false;
+						gameState->playerPoints += allDotsPtr[i].isSpecial ? 3 : 1;
 						LogInfo("POINT RECEIVED! total=%i", gameState->playerPoints);
 					}
 				}
@@ -126,76 +83,194 @@ void HandleHorizontalMovement(Entity& pacman)
 	}
 }
 
-void HandleVerticalMovement(Entity& pacman)
+void HandleVerticalDots(Entity& pacman)
+{
+	Dot* allDotsPtr = gameState->allDots;
+
+	for (int i = 0; i < DOTS_LENGTH; i++)
+	{
+		// Only execute the next checks if the Y position is the same as the Pacman
+		if (floor(pacman.sprite.position.y) == floor(allWaypointsPtr[i].position.y))
+		{
+			// Check if he has triggered with a Dot
+			if (pacman.direction.x > 0)
+			{
+				// Pacman's moving to the right
+				if (pacman.sprite.position.x >= allDotsPtr[i].position.x
+					&& pacman.previousPosition.x < allDotsPtr[i].position.x)
+				{
+					allDotsPtr[i].isEnabled = false;
+					gameState->playerPoints += allDotsPtr[i].isSpecial ? 3 : 1;
+					LogInfo("POINT RECEIVED! total=%i", gameState->playerPoints);
+				}
+			}
+			else
+			{
+				// Pacman's moving to the left
+				if (pacman.sprite.position.x <= allDotsPtr[i].position.x
+					&& pacman.previousPosition.x > allDotsPtr[i].position.x)
+				{
+					if (allDotsPtr[i].isEnabled)
+					{
+						allDotsPtr[i].isEnabled = false;
+						gameState->playerPoints += allDotsPtr[i].isSpecial ? 3 : 1;
+						LogInfo("POINT RECEIVED! total=%i", gameState->playerPoints);
+					}
+				}
+			}
+		}
+	}
+}
+
+void HandleHorizontalWaypoints(Entity& pacman)
+{
+	int desiredDirAsInt = Vec3ToIntDir(gameState->desiredDir);
+	int currentDirAsInt = (pacman.direction.x > 0) ? BINARY_RIGHT : BINARY_LEFT;
+	Waypoint* allWaypointsPtr = gameState->allWaypoints;
+
+	for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+	{
+		// Only execute the next checks if the Y position is the same as the Pacman
+		if (floor(pacman.sprite.position.y) == floor(allWaypointsPtr[i].position.y))
+		{
+			// Check if he has triggered with a Dot
+			if (pacman.direction.x > 0)
+			{
+				// Pacman's moving to the right
+				if (pacman.sprite.position.x >= allWaypointsPtr[i].position.x
+					&& pacman.previousPosition.x < allWaypointsPtr[i].position.x)
+				{
+					if (desiredDirAsInt != 0 && gameState->desiredDir.y != 0)
+					{
+						if ((desiredDirAsInt & allWaypointsPtr[i].allowedDirections) == desiredDirAsInt)
+						{
+							gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
+							pacman.direction = gameState->desiredDir;
+							pacman.sprite.angle = gameState->desiredAngle;
+							pacman.sprite.position.x = allWaypointsPtr[i].position.x;
+							continue;
+						}
+					}
+
+					// Check if we can move on the direction we desire
+					if ((currentDirAsInt & allWaypointsPtr[i].allowedDirections) == currentDirAsInt)
+					{
+						// Just keep moving in the same direction
+						continue;
+					}
+
+					// Pacman hit a wall
+					gameState->curWaypointIndex = i;
+					pacman.direction.x = 0;
+					gameState->desiredDir.x = 0;
+					pacman.sprite.position.x = allWaypointsPtr[i].position.x;
+				}
+			}
+			else
+			{
+				// Pacman's moving to the left
+				if (pacman.sprite.position.x <= allWaypointsPtr[i].position.x
+					&& pacman.previousPosition.x > allWaypointsPtr[i].position.x)
+				{
+					if (desiredDirAsInt != 0 && gameState->desiredDir.y != 0)
+					{
+						if ((desiredDirAsInt & allWaypointsPtr[i].allowedDirections) == desiredDirAsInt)
+						{
+							gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
+							pacman.direction = gameState->desiredDir;
+							pacman.sprite.angle = gameState->desiredAngle;
+							pacman.sprite.position.x = allWaypointsPtr[i].position.x;
+							continue;
+						}
+					}
+
+					if ((currentDirAsInt & allWaypointsPtr[i].allowedDirections) == currentDirAsInt)
+					{
+						// Just keep moving in the same direction
+						continue;
+					}
+
+					// Pacman hit a wall
+					gameState->curWaypointIndex = i;
+					pacman.direction.x = 0;
+					gameState->desiredDir.x = 0;
+					pacman.sprite.position.x = allWaypointsPtr[i].position.x;
+				}
+			}
+		}
+	}
+}
+
+void HandleVerticalWaypoints(Entity& pacman)
 {
 	int desiredDirAsInt = Vec3ToIntDir(gameState->desiredDir);
 	int currentDirAsInt = (gameState->pacman.direction.y > 0) ?
 		BINARY_UP : BINARY_DOWN;
-	Dot* ptrDots = gameState->allDots;
+	Waypoint* allWaypointsPtr = gameState->allWaypoints;
 
-	for (int i = 0; i < DOTS_LENGTH; i++)
+	for (int i = 0; i < WAYPOINTS_LENGTH; i++)
 	{
 		// Only execute the next checks if the X position is the same of the pacman
-		if (floor(pacman.sprite.position.x) == floor(ptrDots[i].position.x))
+		if (floor(pacman.sprite.position.x) == floor(allWaypointsPtr[i].position.x))
 		{
 			// Check if he has triggered with a Dot
 			if (pacman.direction.y > 0) // Moving up
 			{
-				if (pacman.sprite.position.y >= ptrDots[i].position.y
-					&& pacman.previousPosition.y < ptrDots[i].position.y)
+				if (pacman.sprite.position.y >= allWaypointsPtr[i].position.y
+					&& pacman.previousPosition.y < allWaypointsPtr[i].position.y)
 				{
 					if (desiredDirAsInt != 0 && gameState->desiredDir.x != 0)
 					{
-						if ((desiredDirAsInt & ptrDots[i].allowedDirections) == desiredDirAsInt)
+						if ((desiredDirAsInt & allWaypointsPtr[i].allowedDirections) == desiredDirAsInt)
 						{
-							gameState->currentDotIndex = INVALID_WAYPOINT_INDEX;
+							gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
 							pacman.direction = gameState->desiredDir;
 							pacman.sprite.angle = gameState->desiredAngle;
-							pacman.sprite.position.y = ptrDots[i].position.y;
+							pacman.sprite.position.y = allWaypointsPtr[i].position.y;
 							break;
 						}
 					}
 
-					if ((currentDirAsInt & ptrDots[i].allowedDirections) == currentDirAsInt)
+					if ((currentDirAsInt & allWaypointsPtr[i].allowedDirections) == currentDirAsInt)
 					{
 						// Just keep moving in the same direction
 						break;
 					}
 					// Pacman hit a wall
-					gameState->currentDotIndex = i;
+					gameState->curWaypointIndex = i;
 					pacman.direction.y = 0;
 					gameState->desiredDir.y = 0;
-					pacman.sprite.position.y = ptrDots[i].position.y;
+					pacman.sprite.position.y = allWaypointsPtr[i].position.y;
 					break;
 				}
 			} 
 			else // Moving down
 			{
-				if (pacman.sprite.position.y <= ptrDots[i].position.y
-					&& pacman.previousPosition.y > ptrDots[i].position.y)
+				if (pacman.sprite.position.y <= allWaypointsPtr[i].position.y
+					&& pacman.previousPosition.y > allWaypointsPtr[i].position.y)
 				{
 					if (desiredDirAsInt != 0 && gameState->desiredDir.x != 0)
 					{
-						if ((desiredDirAsInt & ptrDots[i].allowedDirections) == desiredDirAsInt)
+						if ((desiredDirAsInt & allWaypointsPtr[i].allowedDirections) == desiredDirAsInt)
 						{
-							gameState->currentDotIndex = INVALID_WAYPOINT_INDEX;
+							gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
 							pacman.direction = gameState->desiredDir;
 							pacman.sprite.angle = gameState->desiredAngle;
-							pacman.sprite.position.y = ptrDots[i].position.y;
+							pacman.sprite.position.y = allWaypointsPtr[i].position.y;
 							break;
 						}
 					}
 
-					if ((currentDirAsInt & ptrDots[i].allowedDirections) == currentDirAsInt)
+					if ((currentDirAsInt & allWaypointsPtr[i].allowedDirections) == currentDirAsInt)
 					{
 						// Just keep moving in the same direction
 						break;
 					}
 					// Pacman hit a wall
-					gameState->currentDotIndex = i;
+					gameState->curWaypointIndex = i;
 					gameState->desiredDir.y = 0;
 					pacman.direction.y = 0;
-					pacman.sprite.position.y = ptrDots[i].position.y;
+					pacman.sprite.position.y = allWaypointsPtr[i].position.y;
 					break;
 				}
 			}
