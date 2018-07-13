@@ -1,6 +1,8 @@
 // game.cpp : Defines the exported functions for the DLL application.
 //#define DEBUG_WAYPOINT_DOTS
 
+#define _ENABLE_MIN_DELTA_TIME_
+
 #include <../include/ldk/ldk.h>
 #include "model.hpp"
 #include "controller.hpp"
@@ -54,53 +56,6 @@ void gameInit(void* memory)
 	gameState->pacman.sprite.position.y = gameState->allWaypoints[20].position.y;
 
 	ldk::render::spriteBatchInit();
-}
-
-void gameStart()
-{
-	gameState->pacman.direction = RIGHT_DIR;
-}
-
-void gameStop() { }
-
-void gameUpdate(float deltaTime)
-{
-	//deltaTime = MIN(deltaTime, 0.016f);
-
-	ldk::render::spriteBatchBegin(gameState->spritesheet);
-	ldk::render::spriteBatchSubmit(gameState->background);
-
-	Entity& pacman = gameState->pacman;
-	ReadInput(deltaTime, pacman);
-	//TODO Move ghosts
-	MovePacman(deltaTime, pacman);
-
-	ldk::Sprite& dotSprite = gameState->dotSprite;
-	
-	Dot* allDotsPtr = gameState->allDots;
-
-	// === DRAW ===
-	for (int x = 0; x < DOTS_LENGTH; x++)
-	{
-		dotSprite.position.x = allDotsPtr[x].position.x;
-		dotSprite.position.y = allDotsPtr[x].position.y;
-		ldk::render::spriteBatchSubmit(gameState->dotSprite);
-	}
-
-	LogInfo("%i", DOTS_LENGTH);
-
-#ifdef DEBUG_WAYPOINTS //_LDK_DEBUG_
-	Waypoint* allWaypoints = gameState->allWaypoints;
-	for (int x = 0; x < WAYPOINTS_LENGTH; x++)
-	{
-		dotSprite.position.x = allWaypoints[x].position.x;
-		dotSprite.position.y = allWaypoints[x].position.y;
-		ldk::render::spriteBatchSubmit(gameState->dotSprite);
-	}
-#endif
-
-	ldk::render::spriteBatchSubmit(gameState->pacman.sprite);
-	ldk::render::spriteBatchEnd();
 }
 
 void InitializeWaypoints()
@@ -198,14 +153,44 @@ void InitializeDots()
 	Waypoint* allWaypointsPtr = gameState->allWaypoints;
 	Dot* allDotsPtr = gameState->allDots;
 
-	ldk::Vec3 xOffset = { 8, 0, 0 };
+	ldk::Vec3 xOffset = { 7.7, 0, 0 };
+	ldk::Vec3 yOffset = { 0, -7.7, 0 };
 
-	allDotsPtr[0] = Dot(allWaypointsPtr[0].position, true);
-	allDotsPtr[1] = Dot(allDotsPtr[0].position + xOffset, false);
-	allDotsPtr[2] = Dot(allDotsPtr[1].position + xOffset, false);
-	allDotsPtr[3] = Dot(allDotsPtr[2].position + xOffset, false);
-	allDotsPtr[4] = Dot(allDotsPtr[3].position + xOffset, false);
-	allDotsPtr[5] = Dot(allDotsPtr[4].position + xOffset, false);
+	int index = 0;
+	allDotsPtr[index++] = Dot(allWaypointsPtr[0].position, true);
+	
+	// 1st line - 1st column (vertical)	
+	for (int i = 0; i < 6; i++)
+	{
+		allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, true);
+	}
+
+	// 1st line - 1st column (horizontal)
+	for (int i = 0; i < 4; i++)
+	{
+		allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, true);
+	}
+	
+	// 1st line - 2nd column (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[9].position, true);
+	for (int i = 0; i < 26; i++)
+	{
+		allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, true);
+	}
+
+	// 2nd line - 1st column (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[1].position + xOffset, true);
+	for (int i = 0; i < 3; i++)
+	{
+		allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, true);
+	}
+
+	// 3rd line - 1st column (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[2].position + xOffset, true);
+	for (int i = 0; i < 3; i++)
+	{
+		allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, true);
+	}	
 
 	// Copy all information from the left side to the right side of the map
 	int halfallDotsLength = (int)DOTS_LENGTH / 2;
@@ -216,6 +201,57 @@ void InitializeDots()
 		allDotsPtr[realIndex] = Dot({ SCREEN_WIDTH - curPos.x, curPos.y }, allDotsPtr[x].isSpecial);
 	}
 }
+
+void gameStart()
+{
+	gameState->pacman.direction = RIGHT_DIR;
+}
+
+void gameStop() { }
+
+void gameUpdate(float deltaTime)
+{
+#ifdef _ENABLE_MIN_DELTA_TIME_
+	deltaTime = MIN(deltaTime, 0.016f);
+#endif
+
+	ldk::render::spriteBatchBegin(gameState->spritesheet);
+	ldk::render::spriteBatchSubmit(gameState->background);
+
+	Entity& pacman = gameState->pacman;
+	ReadInput(deltaTime, pacman);
+	//TODO Move ghosts
+	MovePacman(deltaTime, pacman);
+
+	ldk::Sprite& dotSprite = gameState->dotSprite;
+	
+	Dot* allDotsPtr = gameState->allDots;
+
+	// === DRAW ===
+	for (int x = 0; x < DOTS_LENGTH; x++)
+	{
+		if (allDotsPtr[x].isEnabled)
+		{
+			dotSprite.position.x = allDotsPtr[x].position.x;
+			dotSprite.position.y = allDotsPtr[x].position.y;
+			ldk::render::spriteBatchSubmit(gameState->dotSprite);
+		}
+	}
+
+#ifdef DEBUG_WAYPOINTS //_LDK_DEBUG_
+	Waypoint* allWaypoints = gameState->allWaypoints;
+	for (int x = 0; x < WAYPOINTS_LENGTH; x++)
+	{
+		dotSprite.position.x = allWaypoints[x].position.x;
+		dotSprite.position.y = allWaypoints[x].position.y;
+		ldk::render::spriteBatchSubmit(gameState->dotSprite);
+	}
+#endif
+
+	ldk::render::spriteBatchSubmit(gameState->pacman.sprite);
+	ldk::render::spriteBatchEnd();
+}
+
 
 int InvertHorizontalDirection(const int allowedDirections)
 {

@@ -15,7 +15,7 @@
 #define BINARY_DOWN  0x1
 
 #define WAYPOINTS_LENGTH 64
-#define DOTS_LENGTH 12
+#define DOTS_LENGTH 98
 
 #define INVALID_WAYPOINT_INDEX -1
 
@@ -51,7 +51,7 @@ struct Dot
 	bool isEnabled;
 
 	Dot(ldk::Vec3 pPosition, bool pIsSpecial) :
-		isEnabled(false)
+		isEnabled(true)
 	{
 		position = pPosition;
 		isSpecial = pIsSpecial;

@@ -3,6 +3,7 @@ void HandleHorizontalDots(Entity&);
 void HandleVerticalDots(Entity&);
 void HandleHorizontalWaypoints(Entity&);
 void HandleVerticalWaypoints(Entity&);
+void inline EvaluateDot(Dot&);
 
 void MovePacman(const float deltaTime, Entity& pacman)
 {
@@ -48,35 +49,44 @@ void HandleHorizontalDots(Entity& pacman)
 {
 	Dot* allDotsPtr = gameState->allDots;
 
-	for (int i = 0; i < DOTS_LENGTH; i++)
+	if (pacman.direction.x > 0)
 	{
-		// Only execute the next checks if the Y position is the same as the Pacman
-		if (floor(pacman.sprite.position.y) == floor(allWaypointsPtr[i].position.y))
+		for (int i = 0; i < DOTS_LENGTH; i++)
 		{
-			// Check if he has triggered with a Dot
-			if (pacman.direction.x > 0)
+			if (!allDotsPtr[i].isEnabled)
+			{
+				continue;
+			}
+		
+			// Only execute the next checks if the Y position is the same as the Pacman
+			if (floor(pacman.sprite.position.y) == floor(allDotsPtr[i].position.y))
 			{
 				// Pacman's moving to the right
 				if (pacman.sprite.position.x >= allDotsPtr[i].position.x
-					&& pacman.previousPosition.x < allDotsPtr[i].position.x)
+					&& pacman.previousPosition.x <= allDotsPtr[i].position.x)
 				{
-					allDotsPtr[i].isEnabled = false;
-					gameState->playerPoints += allDotsPtr[i].isSpecial ? 3 : 1;
-					LogInfo("POINT RECEIVED! total=%i", gameState->playerPoints);
+					EvaluateDot(allDotsPtr[i]);
 				}
 			}
-			else
+		}
+	}
+	else
+	{
+		for (int i = 0; i < DOTS_LENGTH; i++)
+		{
+			if (!allDotsPtr[i].isEnabled)
+			{
+				continue;
+			}
+		
+			// Only execute the next checks if the Y position is the same as the Pacman
+			if (floor(pacman.sprite.position.y) == floor(allDotsPtr[i].position.y))
 			{
 				// Pacman's moving to the left
 				if (pacman.sprite.position.x <= allDotsPtr[i].position.x
-					&& pacman.previousPosition.x > allDotsPtr[i].position.x)
+					&& pacman.previousPosition.x >= allDotsPtr[i].position.x)
 				{
-					if (allDotsPtr[i].isEnabled)
-					{
-						allDotsPtr[i].isEnabled = false;
-						gameState->playerPoints += allDotsPtr[i].isSpecial ? 3 : 1;
-						LogInfo("POINT RECEIVED! total=%i", gameState->playerPoints);
-					}
+					EvaluateDot(allDotsPtr[i]);
 				}
 			}
 		}
@@ -87,39 +97,48 @@ void HandleVerticalDots(Entity& pacman)
 {
 	Dot* allDotsPtr = gameState->allDots;
 
-	for (int i = 0; i < DOTS_LENGTH; i++)
+	if (pacman.direction.y > 0)
 	{
-		// Only execute the next checks if the Y position is the same as the Pacman
-		if (floor(pacman.sprite.position.y) == floor(allWaypointsPtr[i].position.y))
+		for (int i = 0; i < DOTS_LENGTH; i++)
 		{
-			// Check if he has triggered with a Dot
-			if (pacman.direction.x > 0)
+			// Only execute the next checks if the Y position is the same as the Pacman
+			if (abs(pacman.sprite.position.x - allDotsPtr[i].position.x) <= 2)
 			{
 				// Pacman's moving to the right
-				if (pacman.sprite.position.x >= allDotsPtr[i].position.x
-					&& pacman.previousPosition.x < allDotsPtr[i].position.x)
+				if (pacman.sprite.position.y >= allDotsPtr[i].position.y
+					&& pacman.previousPosition.y <= allDotsPtr[i].position.y)
 				{
-					allDotsPtr[i].isEnabled = false;
-					gameState->playerPoints += allDotsPtr[i].isSpecial ? 3 : 1;
-					LogInfo("POINT RECEIVED! total=%i", gameState->playerPoints);
+					EvaluateDot(allDotsPtr[i]);
 				}
 			}
-			else
+		}
+	}
+	else
+	{
+		for (int i = 0; i < DOTS_LENGTH; i++)
+		{
+			// Only execute the next checks if the Y position is the same as the Pacman
+			if (abs(pacman.sprite.position.x - allDotsPtr[i].position.x) <= 2)
 			{
 				// Pacman's moving to the left
-				if (pacman.sprite.position.x <= allDotsPtr[i].position.x
-					&& pacman.previousPosition.x > allDotsPtr[i].position.x)
+				if (pacman.sprite.position.y <= allDotsPtr[i].position.y
+					&& pacman.previousPosition.y >= allDotsPtr[i].position.y)
 				{
 					if (allDotsPtr[i].isEnabled)
 					{
-						allDotsPtr[i].isEnabled = false;
-						gameState->playerPoints += allDotsPtr[i].isSpecial ? 3 : 1;
-						LogInfo("POINT RECEIVED! total=%i", gameState->playerPoints);
+						EvaluateDot(allDotsPtr[i]);
 					}
 				}
 			}
 		}
 	}
+}
+
+void inline EvaluateDot(Dot& dot)
+{
+	dot.isEnabled = false;
+	gameState->playerPoints += dot.isSpecial ? 20 : 5;
+	LogInfo("POINT RECEIVED! total=%i", gameState->playerPoints);
 }
 
 void HandleHorizontalWaypoints(Entity& pacman)
@@ -128,13 +147,12 @@ void HandleHorizontalWaypoints(Entity& pacman)
 	int currentDirAsInt = (pacman.direction.x > 0) ? BINARY_RIGHT : BINARY_LEFT;
 	Waypoint* allWaypointsPtr = gameState->allWaypoints;
 
-	for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+	if (pacman.direction.x > 0)
 	{
-		// Only execute the next checks if the Y position is the same as the Pacman
-		if (floor(pacman.sprite.position.y) == floor(allWaypointsPtr[i].position.y))
+		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
 		{
-			// Check if he has triggered with a Dot
-			if (pacman.direction.x > 0)
+			// Only execute the next checks if the Y position is the same as the Pacman
+			if (abs(pacman.sprite.position.y - allWaypointsPtr[i].position.y) <= 2)
 			{
 				// Pacman's moving to the right
 				if (pacman.sprite.position.x >= allWaypointsPtr[i].position.x
@@ -166,7 +184,14 @@ void HandleHorizontalWaypoints(Entity& pacman)
 					pacman.sprite.position.x = allWaypointsPtr[i].position.x;
 				}
 			}
-			else
+		}
+	}
+	else
+	{
+		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+		{
+			// Only execute the next checks if the Y position is the same as the Pacman
+			if (abs(pacman.sprite.position.y - allWaypointsPtr[i].position.y) <= 2)
 			{
 				// Pacman's moving to the left
 				if (pacman.sprite.position.x <= allWaypointsPtr[i].position.x
