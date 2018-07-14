@@ -102,7 +102,7 @@ void HandleVerticalDots(Entity& pacman)
 		for (int i = 0; i < DOTS_LENGTH; i++)
 		{
 			// Only execute the next checks if the Y position is the same as the Pacman
-			if (abs(pacman.sprite.position.x - allDotsPtr[i].position.x) <= 2)
+			if (floor(pacman.sprite.position.x) == floor(allDotsPtr[i].position.x))
 			{
 				// Pacman's moving to the right
 				if (pacman.sprite.position.y >= allDotsPtr[i].position.y
@@ -118,7 +118,7 @@ void HandleVerticalDots(Entity& pacman)
 		for (int i = 0; i < DOTS_LENGTH; i++)
 		{
 			// Only execute the next checks if the Y position is the same as the Pacman
-			if (abs(pacman.sprite.position.x - allDotsPtr[i].position.x) <= 2)
+			if (floor(pacman.sprite.position.x) == floor(allDotsPtr[i].position.x))
 			{
 				// Pacman's moving to the left
 				if (pacman.sprite.position.y <= allDotsPtr[i].position.y
@@ -152,7 +152,7 @@ void HandleHorizontalWaypoints(Entity& pacman)
 		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
 		{
 			// Only execute the next checks if the Y position is the same as the Pacman
-			if (abs(pacman.sprite.position.y - allWaypointsPtr[i].position.y) <= 2)
+			if (floor(pacman.sprite.position.y) == floor(allWaypointsPtr[i].position.y))
 			{
 				// Pacman's moving to the right
 				if (pacman.sprite.position.x >= allWaypointsPtr[i].position.x
@@ -191,7 +191,7 @@ void HandleHorizontalWaypoints(Entity& pacman)
 		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
 		{
 			// Only execute the next checks if the Y position is the same as the Pacman
-			if (abs(pacman.sprite.position.y - allWaypointsPtr[i].position.y) <= 2)
+			if (floor(pacman.sprite.position.y) == floor(allWaypointsPtr[i].position.y))
 			{
 				// Pacman's moving to the left
 				if (pacman.sprite.position.x <= allWaypointsPtr[i].position.x

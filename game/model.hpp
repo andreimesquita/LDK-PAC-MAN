@@ -15,7 +15,7 @@
 #define BINARY_DOWN  0x1
 
 #define WAYPOINTS_LENGTH 64
-#define DOTS_LENGTH 98
+#define DOTS_LENGTH 246
 
 #define INVALID_WAYPOINT_INDEX -1
 
