@@ -3,7 +3,7 @@
 
 // Layers
 #define BACKGROUND_LAYER 0
-#define DOTS_LAYER 1
+#define DOT_LAYER 1
 #define PACMAN_LAYER 2
 #define GHOSTS_LAYER 3
 #define DEBUG_LAYER 99
@@ -14,7 +14,7 @@
 #define BINARY_UP    0x2
 #define BINARY_DOWN  0x1
 
-#define WAYPOINTS_LENGTH 64
+#define WAYPOINTS_LENGTH 65
 #define DOTS_LENGTH 246
 
 #define INVALID_WAYPOINT_INDEX -1
