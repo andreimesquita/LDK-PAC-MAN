@@ -1,8 +1,6 @@
 // game.cpp : Defines the exported functions for the DLL application.
-//#define DEBUG_WAYPOINT_DOTS
-
+//#define _DEBUG_WAYPOINTS_
 //#define _ENABLE_MIN_DELTA_TIME_
-//#define DEBUG_WAYPOINTS
 
 #include <../include/ldk/ldk.h>
 #include "model.hpp"
@@ -31,7 +29,7 @@ void gameInit(void* memory)
 	gameState->background.srcRect = { SCREEN_WIDTH + 2, 0, SCREEN_WIDTH - 2, SCREEN_HEIGHT };
 	gameState->background.angle = 0;
 
-    // Waypoint
+	// Waypoint
 	gameState->dotSprite.color = { 1.0, 1.0, 1.0, 1.0 };
 	gameState->dotSprite.width = 2;
 	gameState->dotSprite.height = 2;
@@ -49,13 +47,13 @@ void gameInit(void* memory)
 	gameState->pacman.sprite.srcRect = { 473, 1, 13, 13 };
 	gameState->pacman.sprite.angle = 0;
 	gameState->pacman.sprite.position = { 114, 0, PACMAN_LAYER };
-    gameState->pacman.sprite.position.y = gameState->allWaypoints[WAYPOINTS_LENGTH-1].position.y;
+	gameState->pacman.sprite.position.y = gameState->allWaypoints[WAYPOINTS_LENGTH-1].position.y;
 	gameState->pacman.previousPosition = gameState->pacman.sprite.position;
 	gameState->pacman.speed = 60;
 	gameState->pacman.direction = { 0,0,0 };
 	gameState->desiredAngle = RADIAN(0);
     
-    gameState->curWaypointIndex = WAYPOINTS_LENGTH - 1;
+	gameState->curWaypointIndex = WAYPOINTS_LENGTH - 1;
 
 	ldk::render::spriteBatchInit();
 }
@@ -64,21 +62,21 @@ void ResetGame()
 {
 	gameState->pacman.sprite.angle = 0;
 	gameState->pacman.sprite.position = { 114, 0, PACMAN_LAYER };
-    gameState->pacman.sprite.position.y = gameState->allWaypoints[WAYPOINTS_LENGTH-1].position.y;
+	gameState->pacman.sprite.position.y = gameState->allWaypoints[WAYPOINTS_LENGTH-1].position.y;
 	gameState->pacman.previousPosition = gameState->pacman.sprite.position;
 	gameState->pacman.speed = 60;
 	gameState->pacman.direction = { 0,0,0 };
     
 	gameState->desiredAngle = RADIAN(0);
-    gameState->desiredDir = {1,0,0};
-    gameState->curWaypointIndex = WAYPOINTS_LENGTH - 1;
-    gameState->playerPoints = 0;
+	gameState->desiredDir = {1,0,0};
+	gameState->curWaypointIndex = WAYPOINTS_LENGTH - 1;
+	gameState->playerPoints = 0;
     
-    Dot* allDotsPtr = gameState->allDots;
-    for (int i = 0; i < DOTS_LENGTH; i++)
-    {
-        allDotsPtr[i].isEnabled = true;
-    }
+	Dot* allDotsPtr = gameState->allDots;
+	for (int i = 0; i < DOTS_LENGTH; i++)
+	{
+		allDotsPtr[i].isEnabled = true;
+	}
 }
 
 void InitializeWaypoints()
@@ -170,7 +168,7 @@ void InitializeWaypoints()
 		allWaypointsPtr[realIndex].allowedDirections = InvertHorizontalDirection(allWaypointsPtr[x].allowedDirections);
 	}
     
-    allWaypointsPtr[WAYPOINTS_LENGTH-1] = 
+	allWaypointsPtr[WAYPOINTS_LENGTH-1] = 
         Waypoint({ 113, allWaypointsPtr[WAYPOINTS_LENGTH-4].position.y, 0 });
 	allWaypointsPtr[WAYPOINTS_LENGTH-1].allowedDirections = (BINARY_LEFT | BINARY_RIGHT);
 }
@@ -185,211 +183,211 @@ void InitializeDots()
 
 	int index = 0;
     
-    // 1st column - 1st line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[0].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    // 1st column - 1st line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[0].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, true);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 2nd column - 1st line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[9].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    // 2nd column - 1st line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[9].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    // 3rd column - 1st line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[24].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 1st column - 2 line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[1].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    // 1st column - 2 line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-
-    // 2nd column - 2nd line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[10].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    // 2nd column - 2nd line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[10].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 3rd column - 2nd line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[16].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    // 3rd column - 2nd line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[16].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 4th column - 2nd line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[25].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    
-    
-    // 1st column - 3rd line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[2].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    
-    
-    // 2nd column - 3rd line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[11].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 3rd column - 3 line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[17].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    
-    
-    // 2nd column - 4th line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[12].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset,false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 1st column - 4th line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[3].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    // 1st column - 4th line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[3].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 2nd column - 5th line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[13].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    // 2nd column - 5th line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[13].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 3rd column - 6th line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[21].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    
-    
-    // 4th column - 5th line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[28].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 1st column - 5th line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[4].position, true);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 1st column - 1st line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[0].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 1st column - 1st line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[0].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, true);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
 
 
-    // 2nd column - 5th line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[7].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 3rd column - 6th line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[14].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    // 3rd column - 6th line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[14].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
+	// 2nd column - 1st line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[9].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 2nd column - 1st line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[9].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
 
-    // 4th column - 7th line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[22].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    // 4th column - 7th line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[22].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 1st column - 6th line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[5].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    // 1st column - 6th line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[5].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 2nd column - 2nd line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[8].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    
-    
-    // 4th column - 8th line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[23].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    
-    
-    // 5th column - 7th line (vertical)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[30].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
-    
-    
-    // 1st column - 7th line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[6].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    
-    
-    // 2nd column - 8th line (horizontal)
-    allDotsPtr[index++] = Dot(allWaypointsPtr[31].position, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
-    allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 3rd column - 1st line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[24].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 1st column - 2 line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[1].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 1st column - 2 line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 2nd column - 2nd line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[10].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 2nd column - 2nd line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[10].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 3rd column - 2nd line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[16].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 3rd column - 2nd line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[16].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 4th column - 2nd line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[25].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+
+
+	// 1st column - 3rd line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[2].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+
+
+	// 2nd column - 3rd line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[11].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 3rd column - 3 line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[17].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+
+
+	// 2nd column - 4th line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[12].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset,false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 1st column - 4th line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[3].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 1st column - 4th line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[3].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 2nd column - 5th line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[13].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 2nd column - 5th line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[13].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 3rd column - 6th line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[21].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+
+
+	// 4th column - 5th line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[28].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 1st column - 5th line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[4].position, true);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+
+
+	// 2nd column - 5th line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[7].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 3rd column - 6th line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[14].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 3rd column - 6th line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[14].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 4th column - 7th line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[22].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 4th column - 7th line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[22].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 1st column - 6th line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[5].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	// 1st column - 6th line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[5].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 2nd column - 2nd line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[8].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+
+
+	// 4th column - 8th line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[23].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+
+
+	// 5th column - 7th line (vertical)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[30].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + yOffset, false);
+
+
+	// 1st column - 7th line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[6].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+
+
+	// 2nd column - 8th line (horizontal)
+	allDotsPtr[index++] = Dot(allWaypointsPtr[31].position, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
+	allDotsPtr[index++] = Dot(allDotsPtr[index-1].position + xOffset, false);
     
     
 	// Copy all information from the left side to the right side of the map
@@ -412,11 +410,11 @@ void gameUpdate(float deltaTime)
 	deltaTime = MIN(deltaTime, 0.016f);
 #endif
     
-    if (ldk::input::isKeyDown(LDK_KEY_R))
-    {
-        ResetGame();
-    }
-    
+	if (ldk::input::isKeyDown(LDK_KEY_R))
+	{
+	ResetGame();
+	}
+
 	ldk::render::spriteBatchBegin(gameState->spritesheet);
 	ldk::render::spriteBatchSubmit(gameState->background);
 
@@ -426,7 +424,7 @@ void gameUpdate(float deltaTime)
 	MovePacman(deltaTime, pacman);
 
 	ldk::Sprite& dotSprite = gameState->dotSprite;
-	
+
 	Dot* allDotsPtr = gameState->allDots;
 
 	// === DRAW ===
@@ -436,32 +434,32 @@ void gameUpdate(float deltaTime)
 		{
 			dotSprite.position.x = allDotsPtr[x].position.x;
 			dotSprite.position.y = allDotsPtr[x].position.y;
-            dotSprite.width = dotSprite.height = (allDotsPtr[x].isSpecial) ? 8 : 2;
+			dotSprite.width = dotSprite.height = (allDotsPtr[x].isSpecial) ? 8 : 2;
 			ldk::render::spriteBatchSubmit(gameState->dotSprite);
 		}
 	}
 
-#ifdef DEBUG_WAYPOINTS //_LDK_DEBUG_
+#ifdef _DEBUG_WAYPOINTS_ //_LDK_DEBUG_
 	Waypoint* allWaypoints = gameState->allWaypoints;
-    
-    ldk::Vec3 defaultSize = {dotSprite.width, dotSprite.height};
-    ldk::Vec4 defaultColor = dotSprite.color;
-    int defaultLayer = dotSprite.position.z;
-    dotSprite.width = dotSprite.height = 4;
-    dotSprite.color = {0, 1, 0, 0.5};
-    
+
+	ldk::Vec3 defaultSize = {dotSprite.width, dotSprite.height};
+	ldk::Vec4 defaultColor = dotSprite.color;
+	int defaultLayer = dotSprite.position.z;
+	dotSprite.width = dotSprite.height = 4;
+	dotSprite.color = {0, 1, 0, 0.5};
+
 	for (int x = 0; x < WAYPOINTS_LENGTH; x++)
 	{
 		dotSprite.position.x = allWaypoints[x].position.x;
 		dotSprite.position.y = allWaypoints[x].position.y;
-        dotSprite.position.z = DEBUG_LAYER;
+		dotSprite.position.z = DEBUG_LAYER;
 		ldk::render::spriteBatchSubmit(gameState->dotSprite);
 	}
     
-    dotSprite.color = defaultColor;
-    dotSprite.width = defaultSize.x;
-    dotSprite.height = defaultSize.y;
-    dotSprite.position.z = defaultLayer;
+	dotSprite.color = defaultColor;
+	dotSprite.width = defaultSize.x;
+	dotSprite.height = defaultSize.y;
+	dotSprite.position.z = defaultLayer;
 #endif
 
 	ldk::render::spriteBatchSubmit(gameState->pacman.sprite);
