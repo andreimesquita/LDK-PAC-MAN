@@ -44,6 +44,17 @@ struct Entity
 	int curWaypointIndex;
 };
 
+enum EGhostType { Blinky, Inky, Pinky, Clyde }
+
+struct Ghost
+{
+	EGhostType Type;
+	ldk::Sprite sprite;
+	ldk::Vec3 direction;
+	ldk::Vec3 previousPosition;
+	float speed;
+}
+
 struct Waypoint
 {
 	ldk::Vec3 position;
@@ -88,6 +99,7 @@ Dot allDots[DOTS_LENGTH];
 
 #include "waypoint.cpp"
 #include "dot.cpp"
+#include "ghosts.cpp"
 #include "input.cpp"
 #include <iostream>
 
@@ -164,6 +176,7 @@ void gameStop() { }
 
 void gameUpdate(float deltaTime)
 {
+LogInfo("x = %f", ldk::input::getJoystickAxis(LDK_JOYSTICK_AXIS_LX));
 #ifdef _ENABLE_MIN_DELTA_TIME_
 	deltaTime = MIN(deltaTime, 0.016f);
 #endif
@@ -173,15 +186,15 @@ void gameUpdate(float deltaTime)
 		ResetGame();
 	}
 
-	ldk::render::spriteBatchBegin(gameState->spritesheet);
-	ldk::render::spriteBatchSubmit(gameState->background);
-
 	Entity& pacman = gameState->pacman;
 	ReadInput(deltaTime, pacman);
-	//TODO Move ghosts
+	MoveGhosts();
 	MovePacman(deltaTime, pacman);
 
 	ldk::Sprite& dotSprite = gameState->dotSprite;
+
+	ldk::render::spriteBatchBegin(gameState->spritesheet);
+	ldk::render::spriteBatchSubmit(gameState->background);
 
 	// === DRAW ===
 	for (int x = 0; x < DOTS_LENGTH; x++)

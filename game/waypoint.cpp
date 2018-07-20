@@ -268,3 +268,130 @@ void HandleVerticalWaypoints(Entity& pacman)
 		}
 	}
 }
+
+void HandleHorizontalWaypointsForGhost(Ghost& ghost)
+{
+	int currentDirAsInt = (pacman.direction.x > 0) ? BINARY_RIGHT : BINARY_LEFT;
+	
+	if (pacman.direction.x > 0)
+	{
+		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+		{
+			// Only execute the next checks if the Y position is the same as the Pacman
+			if (floor(pacman.sprite.position.y) == floor(allWaypoints[i].position.y))
+			{
+				switch (ghost.Type)
+				{
+					case EGhostType.Blinky:
+						//TODO
+						break;
+						
+					case EGhostType.Inky:
+						//TODO
+						break;
+						
+					case EGhostType.Pinky:
+						//TODO
+						break;
+						
+					case EGhostType.Clyde:
+						//TODO
+						break;
+				}
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+		{
+			// Only execute the next checks if the Y position is the same as the Pacman
+			if (floor(pacman.sprite.position.y) == floor(allWaypoints[i].position.y))
+			{
+				switch (ghost.Type)
+				{
+					case EGhostType.Blinky:
+						//TODO
+						break;
+						
+					case EGhostType.Inky:
+						//TODO
+						break;
+						
+					case EGhostType.Pinky:
+						//TODO
+						break;
+						
+					case EGhostType.Clyde:
+						//TODO
+						break;
+				}
+			}
+		}
+	}
+}
+
+void HandleVerticalWaypointsForGhost(Ghost& ghost)
+{
+	int currentDirAsInt = (gameState->pacman.direction.y > 0) ?
+		BINARY_UP : BINARY_DOWN;
+
+	for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+	{
+		// Only execute the next checks if the X position is the same of the pacman
+		if (floor(pacman.sprite.position.x) == floor(allWaypoints[i].position.x))
+		{
+			// Check if he has triggered with a Dot
+			if (pacman.direction.y > 0) // Moving up
+			{
+				if (pacman.sprite.position.y >= allWaypoints[i].position.y
+					&& pacman.previousPosition.y < allWaypoints[i].position.y)
+				{
+					switch (ghost.Type)
+					{
+						case EGhostType.Blinky:
+							//TODO
+							break;
+							
+						case EGhostType.Inky:
+							//TODO
+							break;
+							
+						case EGhostType.Pinky:
+							//TODO
+							break;
+							
+						case EGhostType.Clyde:
+							//TODO
+							break;
+					}
+				}
+			} 
+			else // Moving down
+			{
+				if (pacman.sprite.position.y <= allWaypoints[i].position.y
+					&& pacman.previousPosition.y > allWaypoints[i].position.y)
+				{
+					switch (ghost.Type)
+					{
+						case EGhostType.Blinky:
+							//TODO
+							break;
+							
+						case EGhostType.Inky:
+							//TODO
+							break;
+							
+						case EGhostType.Pinky:
+							//TODO
+							break;
+							
+						case EGhostType.Clyde:
+							//TODO
+							break;
+					}
+				}
+			}
+		}
+	}
+}
