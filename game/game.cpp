@@ -39,6 +39,9 @@ struct Entity
 	ldk::Vec3 direction;
 	ldk::Vec3 previousPosition;
 	float speed;
+	ldk::Vec3 desiredDir;
+	float desiredAngle;
+	int curWaypointIndex;
 };
 
 struct Waypoint
@@ -76,10 +79,7 @@ struct GameState
 	ldk::Material spritesheet;
 	ldk::Sprite background;
 	ldk::Sprite dotSprite;
-	int curWaypointIndex;
 	int playerPoints = 0;
-	ldk::Vec3 desiredDir;
-	float desiredAngle;
 	Entity pacman;
 } *gameState = nullptr;
 
@@ -131,9 +131,9 @@ void gameInit(void* memory)
 	gameState->pacman.previousPosition = gameState->pacman.sprite.position;
 	gameState->pacman.speed = 60;
 	gameState->pacman.direction = { 0,0,0 };
-	gameState->desiredAngle = RADIAN(0);
+	gameState->pacman.desiredAngle = RADIAN(0);
     
-	gameState->curWaypointIndex = WAYPOINTS_LENGTH - 1;
+	gameState->pacman.curWaypointIndex = WAYPOINTS_LENGTH - 1;
 
 	ldk::render::spriteBatchInit();
 }
@@ -147,9 +147,9 @@ void ResetGame()
 	gameState->pacman.speed = 60;
 	gameState->pacman.direction = { 0,0,0 };
     
-	gameState->desiredAngle = RADIAN(0);
-	gameState->desiredDir = {1,0,0};
-	gameState->curWaypointIndex = WAYPOINTS_LENGTH - 1;
+	gameState->pacman.desiredAngle = RADIAN(0);
+	gameState->pacman.desiredDir = {1,0,0};
+	gameState->pacman.curWaypointIndex = WAYPOINTS_LENGTH - 1;
 	gameState->playerPoints = 0;
     
 	for (int i = 0; i < DOTS_LENGTH; i++)
@@ -232,7 +232,7 @@ void MovePacman(const float deltaTime, Entity& pacman)
 		
 		if (pacman.direction.x != 0)
 		{
-			gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
+			gameState->pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
 		}
 	}
 	else if (gameState->pacman.direction.y != 0)
@@ -243,7 +243,7 @@ void MovePacman(const float deltaTime, Entity& pacman)
 
 		if (pacman.direction.y != 0)
 		{
-			gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
+			gameState->pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
 		}
 	}
 

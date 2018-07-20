@@ -111,7 +111,7 @@ void initializeWaypoints()
 
 void HandleHorizontalWaypoints(Entity& pacman)
 {
-	int desiredDirAsInt = Vec3ToIntDir(gameState->desiredDir);
+	int desiredDirAsInt = Vec3ToIntDir(gameState->pacman.desiredDir);
 	int currentDirAsInt = (pacman.direction.x > 0) ? BINARY_RIGHT : BINARY_LEFT;
 	
 	if (pacman.direction.x > 0)
@@ -125,13 +125,13 @@ void HandleHorizontalWaypoints(Entity& pacman)
 				if (pacman.sprite.position.x >= allWaypoints[i].position.x
 					&& pacman.previousPosition.x < allWaypoints[i].position.x)
 				{
-					if (desiredDirAsInt != 0 && gameState->desiredDir.y != 0)
+					if (desiredDirAsInt != 0 && gameState->pacman.desiredDir.y != 0)
 					{
 						if ((desiredDirAsInt & allWaypoints[i].allowedDirections) == desiredDirAsInt)
 						{
-							gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
-							pacman.direction = gameState->desiredDir;
-							pacman.sprite.angle = gameState->desiredAngle;
+							gameState->pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
+							pacman.direction = gameState->pacman.desiredDir;
+							pacman.sprite.angle = gameState->pacman.desiredAngle;
 							pacman.sprite.position.x = allWaypoints[i].position.x;
 							continue;
 						}
@@ -145,9 +145,9 @@ void HandleHorizontalWaypoints(Entity& pacman)
 					}
 
 					// Pacman hit a wall
-					gameState->curWaypointIndex = i;
+					gameState->pacman.curWaypointIndex = i;
 					pacman.direction.x = 0;
-					gameState->desiredDir.x = 0;
+					gameState->pacman.desiredDir.x = 0;
 					pacman.sprite.position.x = allWaypoints[i].position.x;
 				}
 			}
@@ -164,13 +164,13 @@ void HandleHorizontalWaypoints(Entity& pacman)
 				if (pacman.sprite.position.x <= allWaypoints[i].position.x
 					&& pacman.previousPosition.x > allWaypoints[i].position.x)
 				{
-					if (desiredDirAsInt != 0 && gameState->desiredDir.y != 0)
+					if (desiredDirAsInt != 0 && gameState->pacman.desiredDir.y != 0)
 					{
 						if ((desiredDirAsInt & allWaypoints[i].allowedDirections) == desiredDirAsInt)
 						{
-							gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
-							pacman.direction = gameState->desiredDir;
-							pacman.sprite.angle = gameState->desiredAngle;
+							gameState->pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
+							pacman.direction = gameState->pacman.desiredDir;
+							pacman.sprite.angle = gameState->pacman.desiredAngle;
 							pacman.sprite.position.x = allWaypoints[i].position.x;
 							continue;
 						}
@@ -183,9 +183,9 @@ void HandleHorizontalWaypoints(Entity& pacman)
 					}
 
 					// Pacman hit a wall
-					gameState->curWaypointIndex = i;
+					gameState->pacman.curWaypointIndex = i;
 					pacman.direction.x = 0;
-					gameState->desiredDir.x = 0;
+					gameState->pacman.desiredDir.x = 0;
 					pacman.sprite.position.x = allWaypoints[i].position.x;
 				}
 			}
@@ -195,7 +195,7 @@ void HandleHorizontalWaypoints(Entity& pacman)
 
 void HandleVerticalWaypoints(Entity& pacman)
 {
-	int desiredDirAsInt = Vec3ToIntDir(gameState->desiredDir);
+	int desiredDirAsInt = Vec3ToIntDir(gameState->pacman.desiredDir);
 	int currentDirAsInt = (gameState->pacman.direction.y > 0) ?
 		BINARY_UP : BINARY_DOWN;
 
@@ -210,13 +210,13 @@ void HandleVerticalWaypoints(Entity& pacman)
 				if (pacman.sprite.position.y >= allWaypoints[i].position.y
 					&& pacman.previousPosition.y < allWaypoints[i].position.y)
 				{
-					if (desiredDirAsInt != 0 && gameState->desiredDir.x != 0)
+					if (desiredDirAsInt != 0 && gameState->pacman.desiredDir.x != 0)
 					{
 						if ((desiredDirAsInt & allWaypoints[i].allowedDirections) == desiredDirAsInt)
 						{
-							gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
-							pacman.direction = gameState->desiredDir;
-							pacman.sprite.angle = gameState->desiredAngle;
+							gameState->pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
+							pacman.direction = gameState->pacman.desiredDir;
+							pacman.sprite.angle = gameState->pacman.desiredAngle;
 							pacman.sprite.position.y = allWaypoints[i].position.y;
 							break;
 						}
@@ -228,9 +228,9 @@ void HandleVerticalWaypoints(Entity& pacman)
 						break;
 					}
 					// Pacman hit a wall
-					gameState->curWaypointIndex = i;
+					gameState->pacman.curWaypointIndex = i;
 					pacman.direction.y = 0;
-					gameState->desiredDir.y = 0;
+					gameState->pacman.desiredDir.y = 0;
 					pacman.sprite.position.y = allWaypoints[i].position.y;
 					break;
 				}
@@ -240,13 +240,13 @@ void HandleVerticalWaypoints(Entity& pacman)
 				if (pacman.sprite.position.y <= allWaypoints[i].position.y
 					&& pacman.previousPosition.y > allWaypoints[i].position.y)
 				{
-					if (desiredDirAsInt != 0 && gameState->desiredDir.x != 0)
+					if (desiredDirAsInt != 0 && gameState->pacman.desiredDir.x != 0)
 					{
 						if ((desiredDirAsInt & allWaypoints[i].allowedDirections) == desiredDirAsInt)
 						{
-							gameState->curWaypointIndex = INVALID_WAYPOINT_INDEX;
-							pacman.direction = gameState->desiredDir;
-							pacman.sprite.angle = gameState->desiredAngle;
+							gameState->pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
+							pacman.direction = gameState->pacman.desiredDir;
+							pacman.sprite.angle = gameState->pacman.desiredAngle;
 							pacman.sprite.position.y = allWaypoints[i].position.y;
 							break;
 						}
@@ -258,8 +258,8 @@ void HandleVerticalWaypoints(Entity& pacman)
 						break;
 					}
 					// Pacman hit a wall
-					gameState->curWaypointIndex = i;
-					gameState->desiredDir.y = 0;
+					gameState->pacman.curWaypointIndex = i;
+					gameState->pacman.desiredDir.y = 0;
 					pacman.direction.y = 0;
 					pacman.sprite.position.y = allWaypoints[i].position.y;
 					break;
