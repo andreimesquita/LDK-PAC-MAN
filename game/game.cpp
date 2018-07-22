@@ -158,6 +158,7 @@ void gameInit(void* memory)
     // Ghosts
     // [Blinky]
     int waypointIndex = (WAYPOINTS_LENGTH-1)/2;
+    gameState->blinky.Type = Blinky;
     gameState->blinky.sprite.color = {1.0, 1.0, 1.0, 1.0};
     gameState->blinky.sprite.width = 14;
     gameState->blinky.sprite.height = 14;
@@ -172,6 +173,7 @@ void gameInit(void* memory)
     // [Pinky]
     waypointIndex = 0;
     gameState->pinky.sprite.color = {1.0, 1.0, 1.0, 1.0};
+    gameState->pinky.Type = Pinky;
     gameState->pinky.sprite.width = 14;
     gameState->pinky.sprite.height = 14;
     gameState->pinky.sprite.srcRect = {521, 81, 13, 13};
@@ -185,6 +187,7 @@ void gameInit(void* memory)
     // [Inky]
     waypointIndex = (WAYPOINTS_LENGTH - 1) / 2 + 6;
     gameState->inky.sprite.color = {1.0, 1.0, 1.0, 1.0};
+    gameState->inky.Type = Inky;
     gameState->inky.sprite.width = 14;
     gameState->inky.sprite.height = 14;
     gameState->inky.sprite.srcRect = {521, 97, 13, 13};
@@ -195,9 +198,10 @@ void gameInit(void* memory)
     gameState->inky.speed = 60;
     gameState->inky.direction = {0, 1, 0};
     
-    // [Inky]
+    // [Clyde]
     waypointIndex = 6;
     gameState->clyde.sprite.color = {1.0, 1.0, 1.0, 1.0};
+    gameState->clyde.Type = Clyde;
     gameState->clyde.sprite.width = 14;
     gameState->clyde.sprite.height = 14;
     gameState->clyde.sprite.srcRect = {521, 113, 13, 13};
