@@ -1,7 +1,9 @@
 void inline MoveGhost(const float, Ghost&);
 void BlinkyMovementStrategy(Ghost&, Waypoint&);
 void PinkyMovementStrategy(Ghost&, Waypoint&);
+void ClydeMovementStrategy(Ghost&, Waypoint&);
 void RandomMovementStrategy(Ghost&, Waypoint&);
+void InkyMovementStrategy(Ghost&, Waypoint&);
 
 void MoveGhosts(const float deltaTime)
 {
@@ -20,8 +22,9 @@ GhostStrategy GetGhostStrategy(EGhostType type)
         case Pinky:
             return PinkyMovementStrategy;
         case Inky:
+            return InkyMovementStrategy;
         case Clyde:
-            return RandomMovementStrategy;
+            return ClydeMovementStrategy;
     }
     return nullptr;
 }
@@ -149,6 +152,89 @@ void PinkyMovementStrategy(Ghost& ghost, Waypoint& waypoint)
             ldk::Vec3 nextPosition = ghost.sprite.position + (versor * tileSize);
             ldk::Vec3 targetPos = gameState->pacman.sprite.position + 
                 gameState->pacman.direction * (4 * tileSize);
+            ldk::Vec3 diff = (nextPosition - targetPos);
+            float magnitude = fabs(diff.x) + fabs(diff.y);
+            if (magnitude < bestDirectionValue)
+            {
+                bestDirectionValue = magnitude;
+                bestDirection = versor;
+            }
+        }
+        movementMask = (movementMask >> 1);
+    }
+    
+    if (dirAsInt != Vec3ToIntDir(bestDirection))
+    {
+        ghost.sprite.position.x = waypoint.position.x;
+        ghost.sprite.position.y = waypoint.position.y;
+        ghost.direction = bestDirection;
+    }
+}
+
+void ClydeMovementStrategy(Ghost& ghost, Waypoint& waypoint)
+{
+    int dirAsInt = Vec3ToIntInvertedDir(ghost.direction);
+    int filteredDirections = (waypoint.allowedDirections & ~dirAsInt);
+    
+    float bestDirectionValue = 99999;
+    ldk::Vec3 bestDirection;
+    
+    int movementMask = 0x8;
+    for(int x = 0; x < 4; x++)
+    {
+        // Is this direction allowed?
+        if ((filteredDirections & movementMask) == movementMask)
+        {
+            ldk::Vec3 versor = IntDirToVec3(movementMask);
+            const int tileSize = 8;
+            ldk::Vec3 nextPosition = ghost.sprite.position + (versor * tileSize);
+            ldk::Vec3 targetPos = gameState->pacman.sprite.position;
+            ldk::Vec3 diff = (nextPosition - targetPos);
+            float magnitude = fabs(diff.x) + fabs(diff.y);
+            if (magnitude < (8 * tileSize))
+            {
+                targetPos = {0, tileSize * -2, 0};
+                diff = (nextPosition - targetPos);
+                magnitude = fabs(diff.x) + fabs(diff.y);
+            }
+            
+            if (magnitude < bestDirectionValue)
+            {
+                bestDirectionValue = magnitude;
+                bestDirection = versor;
+            }
+        }
+        movementMask = (movementMask >> 1);
+    }
+    
+    if (dirAsInt != Vec3ToIntDir(bestDirection))
+    {
+        ghost.sprite.position.x = waypoint.position.x;
+        ghost.sprite.position.y = waypoint.position.y;
+        ghost.direction = bestDirection;
+    }
+}
+
+void InkyMovementStrategy(Ghost& ghost, Waypoint& waypoint)
+{
+    int dirAsInt = Vec3ToIntInvertedDir(ghost.direction);
+    int filteredDirections = (waypoint.allowedDirections & ~dirAsInt);
+    
+    float bestDirectionValue = 99999;
+    ldk::Vec3 bestDirection;
+    
+    int movementMask = 0x8;
+    for(int x = 0; x < 4; x++)
+    {
+        // Is this direction allowed?
+        if ((filteredDirections & movementMask) == movementMask)
+        {
+            ldk::Vec3 versor = IntDirToVec3(movementMask);
+            const int tileSize = 8;
+            ldk::Vec3 nextPosition = ghost.sprite.position + (versor * 2 * tileSize);
+            ldk::Vec3 targetPos = (((gameState->pacman.sprite.position + 
+                (gameState->pacman.direction * 2)) - gameState->blinky.sprite.position) * 2) + 
+                gameState->blinky.sprite.position;
             ldk::Vec3 diff = (nextPosition - targetPos);
             float magnitude = fabs(diff.x) + fabs(diff.y);
             if (magnitude < bestDirectionValue)
