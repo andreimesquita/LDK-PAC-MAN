@@ -1,22 +1,22 @@
 void ReadInput(const float deltaTime, Entity& pacman)
 {
 	// Control
-	if (ldk::input::getKey(LDK_KEY_LEFT))
+	if (ldk::input::getKey(LDK_KEY_LEFT) || ldk::input::getJoystickButton(LDK_JOYSTICK_DPAD_LEFT))
 	{
 		gameState->pacman.desiredAngle = RADIAN(180);
 		gameState->pacman.desiredDir = LEFT_DIR;
 	}
-	else if (ldk::input::getKey(LDK_KEY_RIGHT))
+	else if (ldk::input::getKey(LDK_KEY_RIGHT) || ldk::input::getJoystickButton(LDK_JOYSTICK_DPAD_RIGHT))
 	{
 		gameState->pacman.desiredAngle = 0;
 		gameState->pacman.desiredDir = RIGHT_DIR;
 	}
-	else if (ldk::input::getKey(LDK_KEY_UP))
+	else if (ldk::input::getKey(LDK_KEY_UP) || ldk::input::getJoystickButton(LDK_JOYSTICK_DPAD_UP))
 	{
 		gameState->pacman.desiredAngle = RADIAN(90);
 		gameState->pacman.desiredDir = UP_DIR;
 	}
-	else if (ldk::input::getKey(LDK_KEY_DOWN))
+	else if (ldk::input::getKey(LDK_KEY_DOWN) || ldk::input::getJoystickButton(LDK_JOYSTICK_DPAD_DOWN))
 	{
 		gameState->pacman.desiredAngle = RADIAN(270);
 		gameState->pacman.desiredDir = DOWN_DIR;

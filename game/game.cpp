@@ -1,5 +1,5 @@
 // game.cpp : Defines the exported functions for the DLL application.
-#define _DEBUG_WAYPOINTS_
+//#define _DEBUG_WAYPOINTS_
 //#define _ENABLE_MIN_DELTA_TIME_
 
 // window
@@ -26,6 +26,8 @@
 
 #include <../include/ldk/ldk.h>
 
+
+int Vec3ToIntInvertedDir(const ldk::Vec3);
 int Vec3ToIntDir(const ldk::Vec3);
 
 const ldk::Vec3 LEFT_DIR  = {-1,  0,  0};
@@ -42,6 +44,17 @@ struct Entity
 	ldk::Vec3 desiredDir;
 	float desiredAngle;
 	int curWaypointIndex;
+};
+
+enum EGhostType { Blinky, Inky, Pinky, Clyde };
+
+struct Ghost
+{
+	EGhostType Type;
+	ldk::Sprite sprite;
+	ldk::Vec3 direction;
+	ldk::Vec3 previousPosition;
+	float speed;
 };
 
 struct Waypoint
@@ -81,13 +94,20 @@ struct GameState
 	ldk::Sprite dotSprite;
 	int playerPoints = 0;
 	Entity pacman;
+    Ghost blinky;
+    Ghost pinky;
+    Ghost inky;
+    Ghost clyde;
 } *gameState = nullptr;
 
 Waypoint allWaypoints[WAYPOINTS_LENGTH];
 Dot allDots[DOTS_LENGTH];
 
+typedef void (*GhostStrategy)(Ghost&, Waypoint&);
+
 #include "waypoint.cpp"
 #include "dot.cpp"
+#include "ghosts.cpp"
 #include "input.cpp"
 #include <iostream>
 
@@ -135,6 +155,63 @@ void gameInit(void* memory)
     
 	gameState->pacman.curWaypointIndex = WAYPOINTS_LENGTH - 1;
 
+    // Ghosts
+    // [Blinky]
+    int waypointIndex = (WAYPOINTS_LENGTH-1)/2;
+    gameState->blinky.Type = Blinky;
+    gameState->blinky.sprite.color = {1.0, 1.0, 1.0, 1.0};
+    gameState->blinky.sprite.width = 14;
+    gameState->blinky.sprite.height = 14;
+    gameState->blinky.sprite.srcRect = {521, 65, 13, 13};
+    gameState->blinky.sprite.angle = 0;
+    gameState->blinky.sprite.position = 
+        { allWaypoints[waypointIndex].position.x, allWaypoints[waypointIndex].position.y - 1, GHOSTS_LAYER };
+    gameState->blinky.previousPosition = allWaypoints[waypointIndex].position;
+    gameState->blinky.speed = 60;
+    gameState->blinky.direction = {0, -1, 0};
+    
+    // [Pinky]
+    waypointIndex = 0;
+    gameState->pinky.sprite.color = {1.0, 1.0, 1.0, 1.0};
+    gameState->pinky.Type = Pinky;
+    gameState->pinky.sprite.width = 14;
+    gameState->pinky.sprite.height = 14;
+    gameState->pinky.sprite.srcRect = {521, 81, 13, 13};
+    gameState->pinky.sprite.angle = 0;
+    gameState->pinky.sprite.position = 
+        { allWaypoints[waypointIndex].position.x, allWaypoints[waypointIndex].position.y - 1, GHOSTS_LAYER };
+    gameState->pinky.previousPosition = allWaypoints[waypointIndex].position;
+    gameState->pinky.speed = 60;
+    gameState->pinky.direction = {0, -1, 0};
+    
+    // [Inky]
+    waypointIndex = (WAYPOINTS_LENGTH - 1) / 2 + 6;
+    gameState->inky.sprite.color = {1.0, 1.0, 1.0, 1.0};
+    gameState->inky.Type = Inky;
+    gameState->inky.sprite.width = 14;
+    gameState->inky.sprite.height = 14;
+    gameState->inky.sprite.srcRect = {521, 97, 13, 13};
+    gameState->inky.sprite.angle = 0;
+    gameState->inky.sprite.position = 
+        { allWaypoints[waypointIndex].position.x, allWaypoints[waypointIndex].position.y + 1, GHOSTS_LAYER };
+    gameState->inky.previousPosition = allWaypoints[waypointIndex].position;
+    gameState->inky.speed = 60;
+    gameState->inky.direction = {0, 1, 0};
+    
+    // [Clyde]
+    waypointIndex = 6;
+    gameState->clyde.sprite.color = {1.0, 1.0, 1.0, 1.0};
+    gameState->clyde.Type = Clyde;
+    gameState->clyde.sprite.width = 14;
+    gameState->clyde.sprite.height = 14;
+    gameState->clyde.sprite.srcRect = {521, 113, 13, 13};
+    gameState->clyde.sprite.angle = 0;
+    gameState->clyde.sprite.position = 
+        { allWaypoints[waypointIndex].position.x, allWaypoints[waypointIndex].position.y + 1, GHOSTS_LAYER };
+    gameState->clyde.previousPosition = allWaypoints[waypointIndex].position;
+    gameState->clyde.speed = 60;
+    gameState->clyde.direction = {0, 1, 0};
+    
 	ldk::render::spriteBatchInit();
 }
 
@@ -173,15 +250,15 @@ void gameUpdate(float deltaTime)
 		ResetGame();
 	}
 
-	ldk::render::spriteBatchBegin(gameState->spritesheet);
-	ldk::render::spriteBatchSubmit(gameState->background);
-
 	Entity& pacman = gameState->pacman;
 	ReadInput(deltaTime, pacman);
-	//TODO Move ghosts
+	MoveGhosts(deltaTime);
 	MovePacman(deltaTime, pacman);
 
 	ldk::Sprite& dotSprite = gameState->dotSprite;
+
+	ldk::render::spriteBatchBegin(gameState->spritesheet);
+	ldk::render::spriteBatchSubmit(gameState->background);
 
 	// === DRAW ===
 	for (int x = 0; x < DOTS_LENGTH; x++)
@@ -217,6 +294,10 @@ void gameUpdate(float deltaTime)
 #endif
 
 	ldk::render::spriteBatchSubmit(gameState->pacman.sprite);
+    ldk::render::spriteBatchSubmit(gameState->blinky.sprite);
+    ldk::render::spriteBatchSubmit(gameState->pinky.sprite);
+    ldk::render::spriteBatchSubmit(gameState->inky.sprite);
+    ldk::render::spriteBatchSubmit(gameState->clyde.sprite);
 	ldk::render::spriteBatchEnd();
 }
 
@@ -258,6 +339,23 @@ void MovePacman(const float deltaTime, Entity& pacman)
 	}
 
 	pacman.previousPosition = pacman.sprite.position;
+}
+
+int Vec3ToIntInvertedDir(const ldk::Vec3 vector)
+{
+    if (vector.x == 1)
+    {
+        return BINARY_LEFT;
+    }
+    if (vector.x == -1)
+    {
+        return BINARY_RIGHT;
+    }
+    if (vector.y == -1)
+    {
+        return BINARY_UP;
+    }
+    return BINARY_DOWN;
 }
 
 int Vec3ToIntDir(const ldk::Vec3 direction)

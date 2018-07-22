@@ -268,3 +268,85 @@ void HandleVerticalWaypoints(Entity& pacman)
 		}
 	}
 }
+
+void HandleHorizontalWaypointsForGhost(Ghost& ghost, GhostStrategy strategyPtr)
+{
+	int currentDirAsInt = (ghost.direction.x > 0) ? BINARY_RIGHT : BINARY_LEFT;
+	
+	if (ghost.direction.x > 0)
+	{
+		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+		{
+			// Only execute the next checks if the Y position is the same as the Pacman
+			if (floor(ghost.sprite.position.y) == floor(allWaypoints[i].position.y))
+			{
+                if (ghost.sprite.position.x >= allWaypoints[i].position.x
+					&& ghost.previousPosition.x < allWaypoints[i].position.x)
+				{
+                    if (strategyPtr != nullptr)
+                    {
+                        strategyPtr(ghost, allWaypoints[i]);
+                    }    
+                }
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+		{
+			// Only execute the next checks if the Y position is the same as the Pacman
+			if (floor(ghost.sprite.position.y) == floor(allWaypoints[i].position.y))
+			{
+                if (ghost.sprite.position.x <= allWaypoints[i].position.x
+					&& ghost.previousPosition.x > allWaypoints[i].position.x)
+				{
+                    if (strategyPtr != nullptr)
+                    {
+                        strategyPtr(ghost, allWaypoints[i]);
+                    }
+                }
+			}
+		}
+	}
+}
+
+void HandleVerticalWaypointsForGhost(Ghost& ghost, GhostStrategy strategyPtr)
+{
+	int currentDirAsInt = (ghost.direction.y > 0) ? BINARY_UP : BINARY_DOWN;
+
+    if (ghost.direction.y > 0) // Moving up
+	{
+        for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+        {
+            if (floor(ghost.sprite.position.x) == floor(allWaypoints[i].position.x))
+            {
+                if (ghost.sprite.position.y >= allWaypoints[i].position.y
+                    && ghost.previousPosition.y < allWaypoints[i].position.y)
+                {
+                    if (strategyPtr != nullptr)
+                    {
+                        strategyPtr(ghost, allWaypoints[i]);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+        {
+            if (floor(ghost.sprite.position.x) == floor(allWaypoints[i].position.x))
+            {
+                if (ghost.sprite.position.y <= allWaypoints[i].position.y
+                    && ghost.previousPosition.y > allWaypoints[i].position.y)
+                {
+                    if (strategyPtr != nullptr)
+                    {
+                        strategyPtr(ghost, allWaypoints[i]);
+                    }
+                }
+            }
+        }
+    }
+}
