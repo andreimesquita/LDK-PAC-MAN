@@ -1,22 +1,22 @@
 void HandleVerticalWaypoints(Entity& pacman);
 void HandleHorizontalWaypoints(Entity& pacman);
 
-int InvertHorizontalDirection(const int allowedDirections)
+int InvertHorizontalDirection(const int directions)
 {
-	int result = allowedDirections & (BINARY_UP | BINARY_DOWN);
-
-	if ((allowedDirections & (BINARY_LEFT | BINARY_RIGHT)) != (BINARY_LEFT | BINARY_RIGHT))
+    int upAndDown = (BINARY_UP | BINARY_DOWN);
+    int leftAndRight = (BINARY_LEFT | BINARY_RIGHT);
+    int result = directions & upAndDown;
+	if ((directions & leftAndRight) != leftAndRight)
 	{
-		// Invert L and R
-		result |= ~allowedDirections & (BINARY_LEFT | BINARY_RIGHT);
+		// Invert left and right bits
+		result |= ~directions & leftAndRight;
 	}
 	else
 	{
-		result |= (BINARY_LEFT | BINARY_RIGHT);
+		result |= leftAndRight;
 	}
-
 	return result;
-}
+};
 
 void initializeWaypoints()
 {
@@ -107,246 +107,166 @@ void initializeWaypoints()
 	allWaypoints[WAYPOINTS_LENGTH-1].position.x = 114;
 	allWaypoints[WAYPOINTS_LENGTH-1].position.y = allWaypoints[29].position.y;
 	allWaypoints[WAYPOINTS_LENGTH-1].allowedDirections = (BINARY_LEFT | BINARY_RIGHT);
-}
+};
 
-void HandleHorizontalWaypoints(Entity& pacman)
+bool isSameHorizontalPosition(const ldk::Vec3 positionA, const ldk::Vec3 positionB)
 {
-	int desiredDirAsInt = Vec3ToIntDir(gameState->pacman.desiredDir);
-	int currentDirAsInt = (pacman.direction.x > 0) ? BINARY_RIGHT : BINARY_LEFT;
-	
-	if (pacman.direction.x > 0)
-	{
-		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
-		{
-			// Only execute the next checks if the Y position is the same as the Pacman
-			if (floor(pacman.sprite.position.y) == floor(allWaypoints[i].position.y))
-			{
-				// Pacman's moving to the right
-				if (pacman.sprite.position.x >= allWaypoints[i].position.x
-					&& pacman.previousPosition.x < allWaypoints[i].position.x)
-				{
-					if (desiredDirAsInt != 0 && gameState->pacman.desiredDir.y != 0)
-					{
-						if ((desiredDirAsInt & allWaypoints[i].allowedDirections) == desiredDirAsInt)
-						{
-							gameState->pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
-							pacman.direction = gameState->pacman.desiredDir;
-							pacman.sprite.angle = gameState->pacman.desiredAngle;
-							pacman.sprite.position.x = allWaypoints[i].position.x;
-							continue;
-						}
-					}
+    return floor(positionA.x) == floor(positionB.x);
+};
 
-					// Check if we can move on the direction we desire
-					if ((currentDirAsInt & allWaypoints[i].allowedDirections) == currentDirAsInt)
-					{
-						// Just keep moving in the same direction
-						continue;
-					}
+bool isSameVerticalPosition(const ldk::Vec3 positionA, const ldk::Vec3 positionB)
+{
+    return floor(positionA.y) == floor(positionB.y);
+};
 
-					// Pacman hit a wall
-					gameState->pacman.curWaypointIndex = i;
-					pacman.direction.x = 0;
-					gameState->pacman.desiredDir.x = 0;
-					pacman.sprite.position.x = allWaypoints[i].position.x;
-				}
-			}
-		}
-	}
-	else
-	{
-		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
-		{
-			// Only execute the next checks if the Y position is the same as the Pacman
-			if (floor(pacman.sprite.position.y) == floor(allWaypoints[i].position.y))
-			{
-				// Pacman's moving to the left
-				if (pacman.sprite.position.x <= allWaypoints[i].position.x
-					&& pacman.previousPosition.x > allWaypoints[i].position.x)
-				{
-					if (desiredDirAsInt != 0 && gameState->pacman.desiredDir.y != 0)
-					{
-						if ((desiredDirAsInt & allWaypoints[i].allowedDirections) == desiredDirAsInt)
-						{
-							gameState->pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
-							pacman.direction = gameState->pacman.desiredDir;
-							pacman.sprite.angle = gameState->pacman.desiredAngle;
-							pacman.sprite.position.x = allWaypoints[i].position.x;
-							continue;
-						}
-					}
+bool hasCrossedVerticalPositionUpwards(const Entity& entity, const ldk::Vec3 targetPosition)
+{
+    return (entity.sprite.position.y >= targetPosition.y
+            && entity.previousPosition.y < targetPosition.y);
+};
 
-					if ((currentDirAsInt & allWaypoints[i].allowedDirections) == currentDirAsInt)
-					{
-						// Just keep moving in the same direction
-						continue;
-					}
+bool hasCrossedVerticalPositionDownwards(const Entity& entity, const ldk::Vec3 targetPosition)
+{
+    return (entity.sprite.position.y <= targetPosition.y
+           && entity.previousPosition.y > targetPosition.y);
+};
 
-					// Pacman hit a wall
-					gameState->pacman.curWaypointIndex = i;
-					pacman.direction.x = 0;
-					gameState->pacman.desiredDir.x = 0;
-					pacman.sprite.position.x = allWaypoints[i].position.x;
-				}
-			}
-		}
-	}
-}
+bool hasCrossedVerticalWaypoint(const Entity& entity, const Waypoint& waypoint)
+{
+    if (entity.direction.y > 0)
+    {
+        return hasCrossedVerticalPositionUpwards(entity, waypoint.position);
+    }
+    return hasCrossedVerticalPositionDownwards(entity, waypoint.position);
+};
+
+bool hasCrossedHorizontalPositionLeftwards(const Entity& entity, const Waypoint& waypoint)
+{
+    return (entity.sprite.position.x <= waypoint.position.x
+            && entity.previousPosition.x > waypoint.position.x);
+};
+
+bool hasCrossedHorizontalPositionRightwards(const Entity& entity, const Waypoint& waypoint)
+{
+    return (entity.sprite.position.x >= waypoint.position.x
+            && entity.previousPosition.x < waypoint.position.x);
+};
+
+bool hasCrossedHorizontalWaypoint(const Entity& entity, const Waypoint& waypoint)
+{
+    if (entity.direction.x > 0)
+    {
+        return hasCrossedHorizontalPositionRightwards(entity, waypoint.position);
+    }
+    return hasCrossedHorizontalPositionLeftwards(entity, waypoint.position);
+};
 
 void HandleVerticalWaypoints(Entity& pacman)
 {
-	int desiredDirAsInt = Vec3ToIntDir(gameState->pacman.desiredDir);
-	int currentDirAsInt = (gameState->pacman.direction.y > 0) ?
-		BINARY_UP : BINARY_DOWN;
-
 	for (int i = 0; i < WAYPOINTS_LENGTH; i++)
 	{
-		// Only execute the next checks if the X position is the same of the pacman
-		if (floor(pacman.sprite.position.x) == floor(allWaypoints[i].position.x))
+	    Waypoint& waypoint = allWaypoints[i];
+		if (isSameHorizontalPosition(pacman.sprite.position, waypoint.position))
 		{
-			// Check if he has triggered with a Dot
-			if (pacman.direction.y > 0) // Moving up
-			{
-				if (pacman.sprite.position.y >= allWaypoints[i].position.y
-					&& pacman.previousPosition.y < allWaypoints[i].position.y)
-				{
-					if (desiredDirAsInt != 0 && gameState->pacman.desiredDir.x != 0)
-					{
-						if ((desiredDirAsInt & allWaypoints[i].allowedDirections) == desiredDirAsInt)
-						{
-							gameState->pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
-							pacman.direction = gameState->pacman.desiredDir;
-							pacman.sprite.angle = gameState->pacman.desiredAngle;
-							pacman.sprite.position.y = allWaypoints[i].position.y;
-							break;
-						}
-					}
-
-					if ((currentDirAsInt & allWaypoints[i].allowedDirections) == currentDirAsInt)
-					{
-						// Just keep moving in the same direction
-						break;
-					}
-					// Pacman hit a wall
-					gameState->pacman.curWaypointIndex = i;
-					pacman.direction.y = 0;
-					gameState->pacman.desiredDir.y = 0;
-					pacman.sprite.position.y = allWaypoints[i].position.y;
-					break;
-				}
-			} 
-			else // Moving down
-			{
-				if (pacman.sprite.position.y <= allWaypoints[i].position.y
-					&& pacman.previousPosition.y > allWaypoints[i].position.y)
-				{
-					if (desiredDirAsInt != 0 && gameState->pacman.desiredDir.x != 0)
-					{
-						if ((desiredDirAsInt & allWaypoints[i].allowedDirections) == desiredDirAsInt)
-						{
-							gameState->pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
-							pacman.direction = gameState->pacman.desiredDir;
-							pacman.sprite.angle = gameState->pacman.desiredAngle;
-							pacman.sprite.position.y = allWaypoints[i].position.y;
-							break;
-						}
-					}
-
-					if ((currentDirAsInt & allWaypoints[i].allowedDirections) == currentDirAsInt)
-					{
-						// Just keep moving in the same direction
-						break;
-					}
-					// Pacman hit a wall
-					gameState->pacman.curWaypointIndex = i;
-					gameState->pacman.desiredDir.y = 0;
-					pacman.direction.y = 0;
-					pacman.sprite.position.y = allWaypoints[i].position.y;
-					break;
-				}
-			}
-		}
-	}
-}
-
-void HandleHorizontalWaypointsForGhost(Ghost& ghost, GhostStrategy strategyPtr)
-{
-	int currentDirAsInt = (ghost.direction.x > 0) ? BINARY_RIGHT : BINARY_LEFT;
-	
-	if (ghost.direction.x > 0)
-	{
-		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
-		{
-			// Only execute the next checks if the Y position is the same as the Pacman
-			if (floor(ghost.sprite.position.y) == floor(allWaypoints[i].position.y))
-			{
-                if (ghost.sprite.position.x >= allWaypoints[i].position.x
-					&& ghost.previousPosition.x < allWaypoints[i].position.x)
-				{
-                    if (strategyPtr != nullptr)
-                    {
-                        strategyPtr(ghost, allWaypoints[i]);
-                    }    
-                }
-			}
-		}
-	}
-	else
-	{
-		for (int i = 0; i < WAYPOINTS_LENGTH; i++)
-		{
-			// Only execute the next checks if the Y position is the same as the Pacman
-			if (floor(ghost.sprite.position.y) == floor(allWaypoints[i].position.y))
-			{
-                if (ghost.sprite.position.x <= allWaypoints[i].position.x
-					&& ghost.previousPosition.x > allWaypoints[i].position.x)
-				{
-                    if (strategyPtr != nullptr)
-                    {
-                        strategyPtr(ghost, allWaypoints[i]);
-                    }
-                }
-			}
-		}
-	}
-}
-
-void HandleVerticalWaypointsForGhost(Ghost& ghost, GhostStrategy strategyPtr)
-{
-	int currentDirAsInt = (ghost.direction.y > 0) ? BINARY_UP : BINARY_DOWN;
-
-    if (ghost.direction.y > 0) // Moving up
-	{
-        for (int i = 0; i < WAYPOINTS_LENGTH; i++)
-        {
-            if (floor(ghost.sprite.position.x) == floor(allWaypoints[i].position.x))
+            if (hasCrossedVerticalWaypoint(pacman, waypoint))
             {
-                if (ghost.sprite.position.y >= allWaypoints[i].position.y
-                    && ghost.previousPosition.y < allWaypoints[i].position.y)
+                if (pacman.desiredDir.x != 0) //want moving horizontally
                 {
-                    if (strategyPtr != nullptr)
+                    int directionAsInt = Vec3ToIntDir(pacman.desiredDir);
+                    if (canMoveOnDirection(waypoint, directionAsInt))
                     {
-                        strategyPtr(ghost, allWaypoints[i]);
+                        pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
+                        pacman.direction = pacman.desiredDir;
+                        pacman.sprite.angle = directionToAngle(pacman.desiredDir);
+                        pacman.sprite.position.y = waypoint.position.y;
+                        break;
                     }
                 }
+                
+                int currentDirAsInt = Vec3ToIntDir(pacman.direction);
+                bool hasHitWall = !canMoveOnDirection(waypoint, currentDirAsInt);
+                if (hasHitWall)
+                {
+                    //pairing vertical movement
+                    pacman.desiredDir.y = 0;
+                    pacman.direction.y = 0;
+                    
+                    //update current waypoint index and position
+                    pacman.curWaypointIndex = i;
+                    pacman.sprite.position.y = waypoint.position.y;
+                }
+                break;
             }
-        }
-    }
-    else
+		}
+	}
+};
+
+void HandleHorizontalWaypoints(Entity& pacman)
+{
+    for (int i = 0; i < WAYPOINTS_LENGTH; i++)
     {
-        for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+        Waypoint& waypoint = allWaypoints[i];
+        if (isSameVerticalPosition(pacman.sprite.position, waypoint.position))
         {
-            if (floor(ghost.sprite.position.x) == floor(allWaypoints[i].position.x))
+            if (hasCrossedHorizontalWaypoint(pacman, waypoint))
             {
-                if (ghost.sprite.position.y <= allWaypoints[i].position.y
-                    && ghost.previousPosition.y > allWaypoints[i].position.y)
+                if (pacman.desiredDir.y != 0) //want moving vertically
                 {
-                    if (strategyPtr != nullptr)
+                    int directionAsInt = Vec3ToIntDir(pacman.desiredDir);
+                    if (canMoveOnDirection(waypoint, directionAsInt))
                     {
-                        strategyPtr(ghost, allWaypoints[i]);
+                        pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
+                        pacman.direction = pacman.desiredDir;
+                        pacman.sprite.angle = directionToAngle(pacman.desiredDir);
+                        pacman.sprite.position.x = waypoint.position.x;
+                        break;
                     }
                 }
+                
+                int currentDirAsInt = Vec3ToIntDir(pacman.direction);
+                bool hasHitWall = !canMoveOnDirection(waypoint, currentDirAsInt);
+                if (hasHitWall)
+                {
+                    //pairing vertical movement
+                    pacman.direction.x = 0;
+                    pacman.desiredDir.x = 0;
+                    
+                    //update current waypoint index and position
+                    pacman.curWaypointIndex = i;
+                    pacman.sprite.position.x = waypoint.position.x;
+                }
+                break;
             }
         }
     }
-}
+};
+
+void HandleHorizontalWaypointsForGhost(Ghost& ghost, GhostStrategy behaviour)
+{
+    for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+    {
+        Waypoint& waypoint = allWaypoints[i];
+        if (isSameVerticalPosition(ghost.sprite.position, waypoint.position))
+        {
+            if (hasCrossedHorizontalWaypoint(ghost, waypoint))
+            {
+                behaviour(ghost, waypoint);
+            }
+        }
+    }
+};
+
+void HandleVerticalWaypointsForGhost(Ghost& ghost, GhostStrategy behaviour)
+{
+    for (int i = 0; i < WAYPOINTS_LENGTH; i++)
+    {
+        Waypoint& waypoint = allWaypoints[i];
+        if (isSameHorizontalPosition(ghost.sprite.position, waypoint.position))
+        {
+            if (hasCrossedVerticalWaypoint(ghost, waypoint))
+            {
+                behaviour(ghost, waypoint);
+            }
+        }
+    }
+};

@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="6129f0fb-a882-49d3-9495-791555aab41e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../Command Line.lnk" beforeDir="false" afterPath="$PROJECT_DIR$/../Command Line.lnk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../_game_copy.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../_game_copy.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/game.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../build/game.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/ldk_game.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../build/ldk_game.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/ldk_game.exp" beforeDir="false" afterPath="$PROJECT_DIR$/../build/ldk_game.exp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/ldk_game.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/../build/ldk_game.ilk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../build/ldk_game.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../build/ldk_game.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/game.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ghosts.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/ghosts.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/input.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/waypoint.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/waypoint.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ldk.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/../ldk.cfg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ldk_game.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../ldk_game.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vc140.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../vc140.pdb" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/game.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="72">
+              <caret line="285" lean-forward="true" selection-start-line="285" selection-end-line="285" />
+              <folding>
+                <element signature="e#0#11920#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/input.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="48">
+              <caret line="2" column="13" lean-forward="true" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/controller.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="192">
+              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dot.cpp">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ghosts.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="192">
+              <caret line="44" lean-forward="true" selection-start-line="44" selection-end-line="44" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/waypoint.cpp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="48">
+              <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+              <folding>
+                <element signature="e#0#13336#0" />
+                <element signature="e#0#13336#0" />
+                <element signature="e#0#13645#0" />
+                <element signature="e#0#13989#0" />
+                <element signature="e#0#13616#0" />
+                <element signature="e#0#12919#0" />
+                <element signature="e#0#12853#0" />
+                <element signature="e#0#13281#0" />
+                <element signature="e#0#12938#0" />
+                <element signature="e#0#11234#0" />
+                <element signature="e#0#12517#0" />
+                <element signature="e#0#12117#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>pacman</find>
+      <find>waypoint</find>
+      <find>curWaypointIndex</find>
+      <find>Waypoint(</find>
+      <find>targetPosition</find>
+      <find>currentDirAsInt</find>
+      <find>tointdor</find>
+      <find>asset</find>
+      <find>pacman =</find>
+      <find>isSameHorizontalPosition</find>
+      <find>desiredDirAsInt</find>
+      <find>isSameVerticalPosition</find>
+      <find>hasCrossedWaypoint</find>
+      <find>allowedDirections</find>
+      <find>directions</find>
+      <find>GetRandomDir</find>
+      <find>RandomMovementStrategy</find>
+      <find>getRandomDir</find>
+      <find>inputReader</find>
+      <find>-&gt;</find>
+      <find>initializeSpritesheet</find>
+      <find>ReadInput</find>
+      <find>ReadPlayerInput</find>
+      <find>_DEBUG_WAYPOINTS_</find>
+      <find>WAYPOINTS_LENGTH</find>
+      <find>WAYPOINTS_LENGTH;</find>
+      <find>_ENABLE_MIN_DELTA_TIME_</find>
+      <find>updatelogic</find>
+      <find>allWaypoints</find>
+      <find>allDots</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>-&gt;</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/waypoint.cpp" />
+        <option value="$PROJECT_DIR$/ghosts.cpp" />
+        <option value="$PROJECT_DIR$/controller.cpp" />
+        <option value="$PROJECT_DIR$/input.cpp" />
+        <option value="$PROJECT_DIR$/game.cpp" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/.idea.PacMan/.idea/vcs.xml" />
+        <option value="$PROJECT_DIR$/.idea/.idea.PacMan/.idea/indexLayout.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-7" />
+    <option name="y" value="40" />
+    <option name="width" value="1513" />
+    <option name="height" value="1047" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator currentView="SolutionExplorer" proportions="" version="1">
+      <autoscrollToSource SolutionExplorer="true" />
+      <autoscrollFromSource SolutionExplorer="true" />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="SolutionExplorer">
+        <subPane>
+          <expand>
+            <path>
+              <item name="" type="784c90a0:SolutionExplorerRootNode" />
+              <item name="PacMan" type="24d0babc:SolutionExplorerModelNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+        <option name="show-all-files" value="true" />
+      </pane>
+      <pane id="AssemblyExplorer" />
+      <pane id="FileSystemExplorer" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
+    <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.handlebarsOptions" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-7" y="40" width="1513" height="1047" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Favorites" side_tool="true" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20165175" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="NuGet" />
+      <window_info anchor="bottom" id="Docker" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" />
+      <window_info anchor="bottom" id="Unit Tests" />
+      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info anchor="bottom" id="Performance Profiler" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="right" id="Errors In Solution" />
+      <window_info anchor="right" id="Unit Tests Coverage" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="null" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" suspend="NONE" type="DotNet Exception Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/dot.cpp">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ghosts.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="44" lean-forward="true" selection-start-line="44" selection-end-line="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controller.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/input.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="2" column="13" lean-forward="true" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/waypoint.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+          <folding>
+            <element signature="e#0#13336#0" />
+            <element signature="e#0#13336#0" />
+            <element signature="e#0#13645#0" />
+            <element signature="e#0#13989#0" />
+            <element signature="e#0#13616#0" />
+            <element signature="e#0#12919#0" />
+            <element signature="e#0#12853#0" />
+            <element signature="e#0#13281#0" />
+            <element signature="e#0#12938#0" />
+            <element signature="e#0#11234#0" />
+            <element signature="e#0#12517#0" />
+            <element signature="e#0#12117#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="285" lean-forward="true" selection-start-line="285" selection-end-line="285" />
+          <folding>
+            <element signature="e#0#11920#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\andre\.Rider2019.1\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\andre\.Rider2019.1\system\resharper-host\local\Transient\ReSharperHost\v191\SolutionCaches\_PacMan.1939759177.00" t="ExcludeRecursive" />
+    <e p="D:\Projects\Git\LDK-PAC-MAN\game" t="IncludeFlat">
+      <e p="PacMan.sln" t="IncludeFlat" />
+    </e>
+  </component>
+</project>
