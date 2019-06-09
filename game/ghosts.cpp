@@ -20,8 +20,65 @@ GhostStrategy GetGhostStrategy(EGhostType type)
     return BlinkyMovementStrategy;
 };
 
+ldk::Vec4 getGhostColor(Ghost& ghost)
+{
+    switch(ghost.Type)
+    {
+        case Blinky:
+            return { 1.0f, 0.0f, 0.0f, 1.0f };
+        case Pinky:
+            return { 1.0f, 0.71f, 0.75f, 1.0f };
+        case Inky:
+            return { 0.0f, 1.0f, 1.0f, 1.0f };
+        case Clyde:
+            return { 1.0f, 0.41f, 0.0f, 1.0f };
+    }
+    return { 1.0f, 1.0f, 1.0f, 1.0f };
+};
+
+void setGhostTargetPosition(Ghost& ghost)
+{
+    const int tileSize = 8;
+    
+    Entity& pacman = gameState->pacman;
+    
+    switch(ghost.Type)
+    {
+        case Blinky: //current pacman's position
+            ghost.TargetPosition = pacman.sprite.position;
+            return;
+          
+        case Pinky: //four titles in front of pacman's direction
+            ghost.TargetPosition = pacman.sprite.position + pacman.previousDirection * (4 * tileSize);
+            break;
+            
+        case Inky:
+            ldk::Vec3 forwardOffset = gameState->pacman.direction * 2;
+            ldk::Vec3 vector = pacman.sprite.position + forwardOffset - gameState->blinky.sprite.position;
+            vector.x = vector.x * 2;
+            vector.y = vector.y * 2;
+            ghost.TargetPosition = gameState->blinky.sprite.position + vector;
+            break;
+            
+        case Clyde:
+            ldk::Vec3 diff = (pacman.sprite.position - ghost.sprite.position);
+            float magnitude = fabs(diff.x) + fabs(diff.y);
+            if (magnitude < (14 * tileSize))
+            {
+                ghost.TargetPosition = {0, tileSize * -2, 0};
+            }
+            else
+            {
+                ghost.TargetPosition = pacman.sprite.position;
+            }
+            break;
+    }
+};
+
 void inline MoveGhost(const float deltaTime, Ghost& ghost)
 {
+    setGhostTargetPosition(ghost);
+
 	ghost.sprite.position += ghost.direction * ghost.speed * deltaTime;
 
 	if (ghost.direction.x != 0) //is moving horizontally?
@@ -50,10 +107,8 @@ void BlinkyMovementStrategy(Ghost& ghost, Waypoint& waypoint)
 {
     int dirAsInt = Vec3ToIntInvertedDir(ghost.direction);
     int filteredDirections = (waypoint.allowedDirections & ~dirAsInt);
-    
     float bestDirectionValue = 99999;
     ldk::Vec3 bestDirection;
-    
     int movementMask = 0x8;
     for(int x = 0; x < 4; x++)
     {
@@ -63,7 +118,7 @@ void BlinkyMovementStrategy(Ghost& ghost, Waypoint& waypoint)
             ldk::Vec3 versor = IntDirToVec3(movementMask);
             const int tileSize = 8;
             ldk::Vec3 nextPosition = ghost.sprite.position + (versor * tileSize);
-            ldk::Vec3 diff = (nextPosition - gameState->pacman.sprite.position);
+            ldk::Vec3 diff = (nextPosition - ghost.TargetPosition);
             float magnitude = fabs(diff.x) + fabs(diff.y);
             if (magnitude < bestDirectionValue)
             {
@@ -86,10 +141,9 @@ void PinkyMovementStrategy(Ghost& ghost, Waypoint& waypoint)
 {
     int dirAsInt = Vec3ToIntInvertedDir(ghost.direction);
     int filteredDirections = (waypoint.allowedDirections & ~dirAsInt);
-    
     float bestDirectionValue = 99999;
     ldk::Vec3 bestDirection;
-    
+    Entity& pacman = gameState -> pacman;
     int movementMask = 0x8;
     for(int x = 0; x < 4; x++)
     {
@@ -99,9 +153,7 @@ void PinkyMovementStrategy(Ghost& ghost, Waypoint& waypoint)
             ldk::Vec3 versor = IntDirToVec3(movementMask);
             const int tileSize = 8;
             ldk::Vec3 nextPosition = ghost.sprite.position + (versor * tileSize);
-            ldk::Vec3 targetPos = gameState->pacman.sprite.position + 
-                gameState->pacman.direction * (4 * tileSize);
-            ldk::Vec3 diff = (nextPosition - targetPos);
+            ldk::Vec3 diff = (nextPosition - ghost.TargetPosition);
             float magnitude = fabs(diff.x) + fabs(diff.y);
             if (magnitude < bestDirectionValue)
             {
@@ -137,16 +189,8 @@ void ClydeMovementStrategy(Ghost& ghost, Waypoint& waypoint)
             ldk::Vec3 versor = IntDirToVec3(movementMask);
             const int tileSize = 8;
             ldk::Vec3 nextPosition = ghost.sprite.position + (versor * tileSize);
-            ldk::Vec3 targetPos = gameState->pacman.sprite.position;
-            ldk::Vec3 diff = (nextPosition - targetPos);
+            ldk::Vec3 diff = (nextPosition - ghost.TargetPosition);
             float magnitude = fabs(diff.x) + fabs(diff.y);
-            if (magnitude < (8 * tileSize))
-            {
-                targetPos = {0, tileSize * -2, 0};
-                diff = (nextPosition - targetPos);
-                magnitude = fabs(diff.x) + fabs(diff.y);
-            }
-            
             if (magnitude < bestDirectionValue)
             {
                 bestDirectionValue = magnitude;
@@ -181,10 +225,7 @@ void InkyMovementStrategy(Ghost& ghost, Waypoint& waypoint)
             ldk::Vec3 versor = IntDirToVec3(movementMask);
             const int tileSize = 8;
             ldk::Vec3 nextPosition = ghost.sprite.position + (versor * 2 * tileSize);
-            ldk::Vec3 targetPos = (((gameState->pacman.sprite.position + 
-                (gameState->pacman.direction * 2)) - gameState->blinky.sprite.position) * 2) + 
-                gameState->blinky.sprite.position;
-            ldk::Vec3 diff = (nextPosition - targetPos);
+            ldk::Vec3 diff = (nextPosition - ghost.TargetPosition);
             float magnitude = fabs(diff.x) + fabs(diff.y);
             if (magnitude < bestDirectionValue)
             {

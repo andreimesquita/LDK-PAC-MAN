@@ -2,18 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6129f0fb-a882-49d3-9495-791555aab41e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Command Line.lnk" beforeDir="false" afterPath="$PROJECT_DIR$/../Command Line.lnk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../_game_copy.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../_game_copy.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../build/game.obj" beforeDir="false" afterPath="$PROJECT_DIR$/../build/game.obj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../build/ldk_game.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../build/ldk_game.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../build/ldk_game.exp" beforeDir="false" afterPath="$PROJECT_DIR$/../build/ldk_game.exp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../build/ldk_game.ilk" beforeDir="false" afterPath="$PROJECT_DIR$/../build/ldk_game.ilk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../build/ldk_game.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../build/ldk_game.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/game.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ghosts.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/ghosts.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/input.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/input.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/waypoint.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/waypoint.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ldk.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/../ldk.cfg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ldk_game.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../ldk_game.dll" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../vc140.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../vc140.pdb" afterDir="false" />
     </list>
@@ -25,11 +20,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="285" lean-forward="true" selection-start-line="285" selection-end-line="285" />
+            <state relative-caret-position="297">
+              <caret line="356" lean-forward="true" selection-start-line="356" selection-end-line="356" />
               <folding>
                 <element signature="e#0#11920#0" />
               </folding>
@@ -40,8 +35,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/input.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="48">
-              <caret line="2" column="13" lean-forward="true" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+            <state relative-caret-position="72">
+              <caret line="3" column="40" lean-forward="true" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -60,11 +55,11 @@
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ghosts.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="192">
-              <caret line="44" lean-forward="true" selection-start-line="44" selection-end-line="44" />
+            <state relative-caret-position="-120">
+              <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
             </state>
           </provider>
         </entry>
@@ -72,8 +67,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/waypoint.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="48">
-              <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+            <state relative-caret-position="1248">
+              <caret line="202" lean-forward="true" selection-start-line="202" selection-end-line="202" />
               <folding>
                 <element signature="e#0#13336#0" />
                 <element signature="e#0#13336#0" />
@@ -83,8 +78,6 @@
                 <element signature="e#0#12919#0" />
                 <element signature="e#0#12853#0" />
                 <element signature="e#0#13281#0" />
-                <element signature="e#0#12938#0" />
-                <element signature="e#0#11234#0" />
                 <element signature="e#0#12517#0" />
                 <element signature="e#0#12117#0" />
               </folding>
@@ -96,11 +89,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>pacman</find>
-      <find>waypoint</find>
-      <find>curWaypointIndex</find>
-      <find>Waypoint(</find>
-      <find>targetPosition</find>
       <find>currentDirAsInt</find>
       <find>tointdor</find>
       <find>asset</find>
@@ -118,7 +106,6 @@
       <find>-&gt;</find>
       <find>initializeSpritesheet</find>
       <find>ReadInput</find>
-      <find>ReadPlayerInput</find>
       <find>_DEBUG_WAYPOINTS_</find>
       <find>WAYPOINTS_LENGTH</find>
       <find>WAYPOINTS_LENGTH;</find>
@@ -126,8 +113,15 @@
       <find>updatelogic</find>
       <find>allWaypoints</find>
       <find>allDots</find>
+      <find>tileSize</find>
+      <find>color</find>
+      <find>ReadPlayerInput</find>
+      <find>.direction</find>
+      <find>movepacman</find>
+      <find>forwardOffset</find>
     </findStrings>
     <replaceStrings>
+      <replace>-&gt;</replace>
       <replace>-&gt;</replace>
     </replaceStrings>
   </component>
@@ -137,11 +131,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/waypoint.cpp" />
-        <option value="$PROJECT_DIR$/ghosts.cpp" />
         <option value="$PROJECT_DIR$/controller.cpp" />
         <option value="$PROJECT_DIR$/input.cpp" />
+        <option value="$PROJECT_DIR$/waypoint.cpp" />
         <option value="$PROJECT_DIR$/game.cpp" />
+        <option value="$PROJECT_DIR$/ghosts.cpp" />
       </list>
     </option>
   </component>
@@ -253,13 +247,6 @@
     <entry file="file://$PROJECT_DIR$/dot.cpp">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/ghosts.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="44" lean-forward="true" selection-start-line="44" selection-end-line="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/controller.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="192">
@@ -269,15 +256,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/input.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
-          <caret line="2" column="13" lean-forward="true" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+        <state relative-caret-position="72">
+          <caret line="3" column="40" lean-forward="true" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/waypoint.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
-          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+        <state relative-caret-position="1248">
+          <caret line="202" lean-forward="true" selection-start-line="202" selection-end-line="202" />
           <folding>
             <element signature="e#0#13336#0" />
             <element signature="e#0#13336#0" />
@@ -287,8 +274,6 @@
             <element signature="e#0#12919#0" />
             <element signature="e#0#12853#0" />
             <element signature="e#0#13281#0" />
-            <element signature="e#0#12938#0" />
-            <element signature="e#0#11234#0" />
             <element signature="e#0#12517#0" />
             <element signature="e#0#12117#0" />
           </folding>
@@ -297,11 +282,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/game.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="285" lean-forward="true" selection-start-line="285" selection-end-line="285" />
+        <state relative-caret-position="297">
+          <caret line="356" lean-forward="true" selection-start-line="356" selection-end-line="356" />
           <folding>
             <element signature="e#0#11920#0" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ghosts.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-120">
+          <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
         </state>
       </provider>
     </entry>

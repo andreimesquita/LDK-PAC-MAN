@@ -36,6 +36,7 @@ class Entity
     public:
         ldk::Sprite sprite;
         ldk::Vec3 direction;
+        ldk::Vec3 previousDirection;
         ldk::Vec3 previousPosition;
         float speed;
         ldk::Vec3 desiredDir;
@@ -48,6 +49,7 @@ class Ghost : public Entity
 {
     public:
         EGhostType Type;
+        ldk::Vec3 TargetPosition;
 };
 
 struct Waypoint
@@ -141,6 +143,7 @@ void initializePacman()
 	gameState -> pacman.previousPosition = gameState -> pacman.sprite.position;
 	gameState -> pacman.speed = 60;
 	gameState -> pacman.direction = { 0,0,0 };
+	gameState -> pacman.previousDirection = { 1,0,0 };
     
     //set default waypoint index (centered position)
 	gameState -> pacman.curWaypointIndex = WAYPOINTS_LENGTH - 1;
@@ -282,7 +285,27 @@ void gameUpdate(float deltaTime)
     MovePacman(deltaTime, pacman);
 	
 	draw();
-}
+};
+
+void drawGhostTargetPosition(Ghost& ghost)
+{
+    ldk::Sprite& dotSprite = gameState -> dotSprite;
+    ldk::Vec3 defaultSize = {dotSprite.width, dotSprite.height};
+    ldk::Vec4 defaultColor = dotSprite.color;
+    int defaultLayer = dotSprite.position.z;
+
+    dotSprite.color = getGhostColor(ghost);
+    dotSprite.width = dotSprite.height = 8;
+    dotSprite.position.x = ghost.TargetPosition.x;
+    dotSprite.position.y = ghost.TargetPosition.y;
+    dotSprite.position.z = DEBUG_LAYER;
+    ldk::render::spriteBatchSubmit(dotSprite);
+    
+    dotSprite.color = defaultColor;
+    dotSprite.width = defaultSize.x;
+    dotSprite.height = defaultSize.y;
+    dotSprite.position.z = defaultLayer;
+};
 
 void draw()
 {
@@ -331,7 +354,12 @@ void draw()
     ldk::render::spriteBatchSubmit(gameState -> pinky.sprite);
     ldk::render::spriteBatchSubmit(gameState -> inky.sprite);
     ldk::render::spriteBatchSubmit(gameState -> clyde.sprite);
-    
+
+    drawGhostTargetPosition(gameState->blinky);
+    drawGhostTargetPosition(gameState->pinky);
+    drawGhostTargetPosition(gameState->inky);
+    drawGhostTargetPosition(gameState->clyde);
+
 	ldk::render::spriteBatchEnd();
 };
 
@@ -348,6 +376,7 @@ void MovePacman(const float deltaTime, Entity& pacman)
 		if (pacman.direction.x != 0)
 		{
 			gameState -> pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
+			pacman.previousDirection = pacman.direction;
 		}
 	}
 	else if (gameState -> pacman.direction.y != 0)
@@ -359,6 +388,7 @@ void MovePacman(const float deltaTime, Entity& pacman)
 		if (pacman.direction.y != 0)
 		{
 			gameState -> pacman.curWaypointIndex = INVALID_WAYPOINT_INDEX;
+			pacman.previousDirection = pacman.direction;
 		}
 	}
 
