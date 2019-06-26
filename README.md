@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/qe4scoybey8y9gxl?svg=true)](https://ci.appveyor.com/project/andreimesquita/ldk-pac-man)
+
 # LDK-PAC-MAN
 [![sologamedev](https://image.ibb.co/hypK48/Captura_de_Tela_2018_07_08_a_s_11_46_13.png)](https://sologamedevblog.wordpress.com/)
 
